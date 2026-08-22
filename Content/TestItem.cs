@@ -21,6 +21,7 @@ namespace EthoriaMod.Content
             Item.useTime = 12;
             Item.width = 32;
             Item.height = 32;
+            Item.damage = 1000;
             Item.value = Item.sellPrice(100);
         }
 
