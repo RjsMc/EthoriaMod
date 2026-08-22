@@ -14,7 +14,8 @@ namespace EthoriaMod.Content
     {
         public override void SetDefaults()
         {
-            
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.value = Item.sellPrice(100);
         }
 
     }
