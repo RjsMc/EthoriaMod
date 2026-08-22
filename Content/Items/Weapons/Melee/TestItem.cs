@@ -10,7 +10,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EthoriaMod.Content
+namespace EthoriaMod.Content.Items.Weapons.Melee
 {
     internal class TestItem : ModItem
     {
