@@ -23,7 +23,7 @@ namespace EthoriaMod.Content
 
             Item.width = 32;
             Item.height = 32;
-
+            Item.scale = 3;
 
             Item.damage = 1000;
             Item.value = Item.sellPrice(100);
