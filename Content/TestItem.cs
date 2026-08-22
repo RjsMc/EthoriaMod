@@ -14,7 +14,13 @@ namespace EthoriaMod.Content
     {
         public override void SetDefaults()
         {
+
+
             Item.useStyle = ItemUseStyleID.Swing;
+            Item.useAnimation = 12;
+            Item.useTime = 12;
+            Item.width = 32;
+            Item.height = 32;
             Item.value = Item.sellPrice(100);
         }
 
