@@ -1,3 +1,4 @@
 The Ethorian Legacy Mod is a content mod for terraria.
 
 For now it does not offer much as this is used for now to learn modding.
+Made by Richard and Jonathan.
