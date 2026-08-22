@@ -10,7 +10,8 @@
 
 	<!-- References -->
 	<ItemGroup>
-		
+	  <Folder Include="Assets\" />
+	  <Folder Include="Content\Items\Armor\TestArmorClass\" />
 	</ItemGroup>
 
 </Project>
