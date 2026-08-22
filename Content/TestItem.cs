@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +29,16 @@ namespace EthoriaMod.Content
 
             Item.damage = 1000;
             Item.value = Item.sellPrice(100);
+        }
+
+        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            float customScale = scale * 2.0f;
+
+            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            spriteBatch.Draw(texture, position, frame, drawColor, 0f, origin, customScale, SpriteEffects.None, 0f);
+
+            return false;
         }
 
     }
