@@ -5,16 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EthoriaMod.Content.EthoriaPlayer
+namespace EthoriaMod.Content.EthPlayer
 {
     public class EthoriaPlayer : ModPlayer
     {
         public float stamina = 0.0f;
+        public float maxStamina = 100.0f;
+        private float minStaminaToRun = 10.0f;
+
         public bool sprinting = false;
+        public float baseSpd = 0.0f;
 
         private bool lastLeftControl = false;
         private bool lastRightControl = false;
@@ -28,6 +33,13 @@ namespace EthoriaMod.Content.EthoriaPlayer
 
         public override void PreUpdate()
         {
+
+            if (!sprinting)
+            {
+                stamina++;
+                stamina = float.Clamp(stamina, 0.0f, maxStamina);
+            }
+
             if (!lastLeftControl) 
             {
                 controlLeftPressed = Player.controlLeft;
@@ -53,28 +65,31 @@ namespace EthoriaMod.Content.EthoriaPlayer
         public override void PreUpdateMovement()
         {
 
-
+            
 
             float maxSpd = Player.maxRunSpeed;
             float xSpd = float.Abs(Player.velocity.X);
 
-            if (rTap > 0 && rTap < doubleTapWindow && controlRightPressed)
+            if (stamina >= minStaminaToRun && rTap > 0 && rTap < doubleTapWindow && controlRightPressed)
             {
+                baseSpd = maxSpd;
+                stamina -= minStaminaToRun;
                 if (float.Sign(Player.velocity.X) < 0 || xSpd < maxSpd)
                 {
                     Player.velocity.X = maxSpd;
                 }
                 sprinting = true;
-            } else if (lTap > 0 && lTap < doubleTapWindow && controlLeftPressed)
+            } else if (stamina >= minStaminaToRun && lTap > 0 && lTap < doubleTapWindow && controlLeftPressed)
             {
+                baseSpd = maxSpd;
+                stamina -= minStaminaToRun;
                 if (float.Sign(Player.velocity.X) > 0 || xSpd < maxSpd)
                 {
                     Player.velocity.X = -maxSpd;
                 }
                 sprinting = true;
             }
-
-            if (!Player.controlLeft && !Player.controlRight)
+            if (!Player.controlLeft && !Player.controlRight || stamina <= 0.0f || float.Abs(Player.velocity.X) < baseSpd)
             {
                 sprinting = false;
             }
@@ -92,6 +107,7 @@ namespace EthoriaMod.Content.EthoriaPlayer
         {
             if (sprinting)
             {
+                stamina--;
                 Player.maxRunSpeed *= 2;
             }
 
