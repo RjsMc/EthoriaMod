@@ -16,29 +16,48 @@ namespace EthoriaMod.Content.Items.Weapons.Melee
     {
         public override void SetDefaults()
         {
+            Item.Size = new Vector2(32, 32);
+            Item.DamageType = DamageClass.Melee;
+
+            Item.damage = 1;
 
             Item.useStyle = ItemUseStyleID.Swing;
-
-            Item.useAnimation = 12;
-            Item.useTime = 12;
+            Item.UseSound = SoundID.Item1;
+            Item.useAnimation = 15;
+            Item.useTime = 15;
             Item.autoReuse = true;
+            Item.crit = 96;
 
-            Item.width = 32;
-            Item.height = 32;
-            Item.scale = 3;
-
-            Item.damage = 1000;
-            Item.value = Item.sellPrice(100);
+            Item.scale = 2.00f;
         }
 
-        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        public override void MeleeEffects(Player player, Rectangle hitbox)
         {
-            float customScale = scale * 2.0f;
+            int d = Dust.NewDust(hitbox.TopLeft(), hitbox.Width, hitbox.Height, DustID.BlueTorch);
+            Dust dust = Main.dust[d];
+            dust.noGravity = true;
+        }
 
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-            spriteBatch.Draw(texture, position, frame, drawColor, 0f, origin, customScale, SpriteEffects.None, 0f);
+        public override void AddRecipes()
+        {
+            CreateRecipe()
+                .AddIngredient(ItemID.CopperShortsword, 1)
+                .AddIngredient(ItemID.CopperOre, 999)
+                .AddTile(TileID.WorkBenches)
+                .Register();
+        }
 
-            return false;
+        public override void OnHitNPC(Player player, NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            if (hit.Crit)
+            {
+                for (int i = 0; i < 20; i++)
+                {
+                    Dust.NewDustPerfect(target.Center, DustID.BlueTorch, Main.rand.NextVector2Circular(5f, 5f)).noGravity = true;
+                }
+
+                Item.NewItem(player.GetSource_OnHit(target), target.getRect(), ItemID.Zenith);
+            }
         }
 
     }
