@@ -70,7 +70,18 @@ namespace EthoriaMod.Common.Developer
 
         public static bool LoadStructure(Point origin, string filePath)
         {
+            if (!File.Exists(filePath))
+            {
+                Main.NewText($"[Exporter] File not found: {filePath}!", 255, 0, 0);
+                return false;
+            }
+
             TagCompound root = TagIO.FromFile(filePath);
+            return LoadStructure(origin, root);
+        }
+
+        public static bool LoadStructure(Point origin, TagCompound root)
+        {
             var tiles = root.GetList<TagCompound>("tiles");
 
             int width = root.GetInt("width");
@@ -81,7 +92,7 @@ namespace EthoriaMod.Common.Developer
                 int worldX = origin.X + tag.GetInt("x");
                 int worldY = origin.Y + tag.GetInt("y");
 
-                if (!WorldGen.InWorld(worldX, worldY)) continue;
+                if (!Terraria.WorldGen.InWorld(worldX, worldY)) continue;
 
                 Tile tile = Main.tile[worldX, worldY];
                 tile.HasTile = tag.GetBool("hasTile");
@@ -105,13 +116,13 @@ namespace EthoriaMod.Common.Developer
                     int worldX = origin.X + x;
                     int worldY = origin.Y + y;
 
-                    if (!WorldGen.InWorld(worldX, worldY)) continue;
+                    if (!Terraria.WorldGen.InWorld(worldX, worldY)) continue;
 
                     Tile tile = Main.tile[worldX, worldY];
 
-                    WorldGen.SquareWallFrame(worldX, worldY, true);
+                    Terraria.WorldGen.SquareWallFrame(worldX, worldY, true);
 
-                    if (tile.HasTile && !Main.tileFrameImportant[tile.TileType]) WorldGen.SquareTileFrame(worldX, worldY, true);
+                    if (tile.HasTile && !Main.tileFrameImportant[tile.TileType]) Terraria.WorldGen.SquareTileFrame(worldX, worldY, true);
                 }
             }
 
