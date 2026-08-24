@@ -10,7 +10,7 @@
 
 	<!-- References -->
 	<ItemGroup>
-	  <Folder Include="Assets\" />
+	  <Folder Include="Common\WorldGen\" />
 	  <Folder Include="Content\Items\Armor\TestArmorClass\" />
 	</ItemGroup>
 

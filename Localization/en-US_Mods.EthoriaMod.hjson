@@ -3,4 +3,9 @@ Items: {
 		DisplayName: Test Item
 		Tooltip: ""
 	}
+
+	EthoriaExporter: {
+		DisplayName: Ethoria Exporter
+		Tooltip: ""
+	}
 }

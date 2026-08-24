@@ -15,7 +15,7 @@ namespace EthoriaMod.Content.EthPlayer
     public class EthoriaPlayer : ModPlayer
     {
         public float stamina = 0.0f;
-        public float maxStamina = 100.0f;
+        public float maxStamina = 300.0f;
         private float minStaminaToRun = 10.0f;
 
         public bool sprinting = false;
