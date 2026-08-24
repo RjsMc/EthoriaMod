@@ -58,7 +58,7 @@ namespace EthoriaMod.Common.WorldGen
                 attempts++;
 
                 int randomX = Terraria.WorldGen.genRand.Next(50, Main.maxTilesX - 50);
-                int randomY = Terraria.WorldGen.genRand.Next((int)Main.worldSurface, Main.maxTilesY - 50);
+                int randomY = Terraria.WorldGen.genRand.Next(50, Main.maxTilesY - 200);
 
                 Point spawnPoint = new Point(randomX, randomY);
 
