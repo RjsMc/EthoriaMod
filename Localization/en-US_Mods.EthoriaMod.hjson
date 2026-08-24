@@ -4,8 +4,8 @@ Items: {
 		Tooltip: ""
 	}
 
-	EthoriaExporter: {
-		DisplayName: Ethoria Exporter
+	PreciseBow: {
+		DisplayName: Precise Bow
 		Tooltip: ""
 	}
 }
