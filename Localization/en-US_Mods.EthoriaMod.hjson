@@ -3,4 +3,9 @@ Items: {
 		DisplayName: Test Item
 		Tooltip: ""
 	}
+
+	PreciseBow: {
+		DisplayName: Precise Bow
+		Tooltip: ""
+	}
 }
