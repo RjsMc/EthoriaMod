@@ -73,6 +73,9 @@ namespace EthoriaMod.Common.Developer
             TagCompound root = TagIO.FromFile(filePath);
             var tiles = root.GetList<TagCompound>("tiles");
 
+            int width = root.GetInt("width");
+            int height = root.GetInt("height");
+
             foreach (var tag in tiles)
             {
                 int worldX = origin.X + tag.GetInt("x");
@@ -88,10 +91,30 @@ namespace EthoriaMod.Common.Developer
                     tile.TileType = (ushort)tag.GetAsShort("type");
                     tile.TileFrameX = tag.GetAsShort("fx");
                     tile.TileFrameY = tag.GetAsShort("fy");
+
+                    if ((tile.TileType == TileID.Containers || tile.TileType == TileID.Containers2) && tile.TileFrameX % 36 == 0 && tile.TileFrameY == 0) Chest.CreateChest(worldX, worldY);
                 }
 
                 tile.WallType = (ushort)tag.GetAsShort("wall");
             }
+
+            for (int x = -1; x <= width; x++)
+            {
+                for (int y = -1; y <= height; y++)
+                {
+                    int worldX = origin.X + x;
+                    int worldY = origin.Y + y;
+
+                    if (!WorldGen.InWorld(worldX, worldY)) continue;
+
+                    Tile tile = Main.tile[worldX, worldY];
+
+                    WorldGen.SquareWallFrame(worldX, worldY, true);
+
+                    if (tile.HasTile && !Main.tileFrameImportant[tile.TileType]) WorldGen.SquareTileFrame(worldX, worldY, true);
+                }
+            }
+
             return true;
         }
     }

@@ -14,15 +14,15 @@ namespace EthoriaMod.Common.Developer
     public class SchematicImportCommand : ModCommand
     {
         public override CommandType Type => CommandType.Chat;
-        public override string Command => "importstructure";
+        public override string Command => "is";
         public override string Description => "Imports specified schematic file.";
-        public override string Usage => "/importstructure <filename>";
+        public override string Usage => "/is <filename>";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
             if (args.Length != 1)
             {
-                caller.Reply("[Importer] Usage: /importstructure <filename>", Color.Red);
+                caller.Reply("[Importer] Usage: /is <filename>", Color.Red);
                 return;
             }
 

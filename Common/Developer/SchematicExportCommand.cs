@@ -17,20 +17,20 @@ namespace EthoriaMod.Common.Developer
     public class SchematicExportCommand : ModCommand
     {
         public override CommandType Type => CommandType.Chat;
-        public override string Command => "exportstructure";
+        public override string Command => "es";
         public override string Description => "Exports selected region set by the EthoriaExporter.";
-        public override string Usage => "/exportstructure <filename>";
+        public override string Usage => "/es <filename>";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
             if (args.Length < 1) 
             { 
-                caller.Reply("[Exporter] Please specify a filename! Usage: /exportstructure <filename>", Color.Red);
+                caller.Reply("[Exporter] Please specify a filename! Usage: /es <filename>", Color.Red);
                 return;
             }
             if (args.Length > 1)
             {
-                caller.Reply("[Exporter] Too many arguments! Usage: /exportstructure <filename>", Color.Red);
+                caller.Reply("[Exporter] Too many arguments! Usage: /es <filename>", Color.Red);
                 return;
             }
 
