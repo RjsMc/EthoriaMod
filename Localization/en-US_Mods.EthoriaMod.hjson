@@ -14,3 +14,5 @@ Items: {
 		Tooltip: ""
 	}
 }
+
+Projectiles.knockedArrow.DisplayName: knocked Arrow
