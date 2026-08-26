@@ -35,6 +35,9 @@ namespace EthoriaMod.Content.UI
 
             Rectangle barRectangle = new Rectangle(0, 0, barTex.Width, barTex.Height);
             spriteBatch.Draw(barTex, drawPos, barRectangle, Color.White, 0.0f, new Vector2(0, 0), new Vector2(maxBarW * expPercent, 1.0f), SpriteEffects.None, 0);
+
+            String expBarStr = "Lv " + ethPlayer.level.ToString() + " - " + ethPlayer.currentExp.ToString() + "/" + ethPlayer.expToLevelUp().ToString();
+            Utils.DrawBorderString(Main.spriteBatch, expBarStr, drawPos, Color.White);
          
         }
     }

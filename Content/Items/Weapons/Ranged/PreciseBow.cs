@@ -34,7 +34,6 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             Item.shootSpeed = 5f;
             Item.useAmmo = AmmoID.Arrow;
         }
-        
 
         public override bool CanUseItem(Player player) => (player.itemAnimation == 0);
 
@@ -51,6 +50,8 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             theArrow.itemID = consumedAmmoId;
             theArrow.actualType = type;
             return false;
+
+            
         } 
         
 
