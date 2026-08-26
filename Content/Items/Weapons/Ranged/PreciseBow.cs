@@ -33,11 +33,6 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             Item.shoot = ModContent.ProjectileType<knockedArrow>();
             Item.shootSpeed = 5f;
             Item.useAmmo = AmmoID.Arrow;
-
-
-
-
-
         }
         
 

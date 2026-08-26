@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -11,6 +12,7 @@ using Mono.Cecil;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.UI.Elements;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.Localization;
@@ -95,19 +97,35 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             } else
             {
 
-                // The arrow is rotated around the bottom middle
-                // The bow is rotated around HoldoutOffset()
-
-                Owner.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
 
                 Projectile.rotation = Projectile.velocity.ToRotation() - float.Pi / 2;
 
+                float normalizedAngle = Projectile.rotation - (float.Floor(Projectile.rotation / (2 * float.Pi)) * (2 * float.Pi));
+                Projectile.direction = 1;
+                if (normalizedAngle > 0 && normalizedAngle < float.Pi)
+                {
+                    Projectile.direction = -1;
+                }
+
                 Projectile.velocity = Vector2.Lerp(Projectile.velocity, Owner.DirectionTo(Main.MouseWorld), interpSpd);
+
+
 
                 Owner.ChangeDir(Projectile.direction);
 
+                Owner.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
+
+
+
+                Owner.heldProj = Projectile.whoAmI;
+
+
+                float angle = Projectile.rotation + Projectile.direction * (chargedPercent * float.Pi / 2);
+
+                Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, angle);
             }
-            
+
+
 
         }
     }
