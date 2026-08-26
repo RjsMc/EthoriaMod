@@ -30,7 +30,11 @@ Items: {
 	}
 }
 
+<<<<<<< HEAD
 NPCs.TestEnemy.DisplayName: Test Enemy
 Projectiles.knockedArrow.DisplayName: knocked Arrow
 Tiles.Testerite.MapEntry: Testerite
 WorldGen.TesteritePassMessage: Mods.EthoriaMod.WorldGen.TesteritePassMessage
+=======
+Projectiles.knockedArrow.DisplayName: knocked Arrow
+>>>>>>> 03dac0b0c9765e0657db4d95d1eedeb7b548f632

@@ -54,10 +54,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         public override bool PreDraw(ref Color lightColor)
         {
 
-            if (Projectile.aiStyle == ProjAIStyleID.Arrow)
-            {
-                return true;
-            }
+           
 
             Owner.heldProj = Projectile.whoAmI;
             Texture2D newTexture = TextureAssets.Item[itemID].Value;
@@ -76,11 +73,6 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         {
             currentChargingFrames++;
             
-            if (Projectile.aiStyle == ProjAIStyleID.Arrow)
-            {
-                return;
-            }
-
             float chargedPercent = (float)currentChargingFrames / (float)maxChargingFrames;
             float mag = minShootStrength + (maxShootStrength - minShootStrength) * chargedPercent;
 
@@ -99,7 +91,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 Owner.itemTime = 0;
 
                 Projectile.Kill();
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.position, Projectile.velocity, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), tipPosition, Projectile.velocity, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
             } else
             {
 
@@ -107,13 +99,6 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 // The bow is rotated around HoldoutOffset()
 
                 Owner.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
-
-                Texture2D arrowTex = ModContent.Request<Texture2D>("EthoriaMod/Content/Items/Weapons/Ranged/knockedArrow").Value;
-
-                Vector2 texOffSet = arrowTex.Size();
-                texOffSet.Y *= 2;
-                
-                Projectile.position = tipPosition - texOffSet * 0.5f;
 
                 Projectile.rotation = Projectile.velocity.ToRotation() - float.Pi / 2;
 
