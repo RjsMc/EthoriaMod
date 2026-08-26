@@ -1,19 +1,21 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace EthoriaMod.Content.Items.Weapons.Melee
 {
     internal class TestItem : ModItem
     {
+
+  
         public override void SetDefaults()
         {
             Item.Size = new Vector2(32, 32);

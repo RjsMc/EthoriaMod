@@ -30,7 +30,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             Item.rare = ItemRarityID.Purple;
             Item.autoReuse = true;
 
-            Item.shoot = ModContent.ProjectileType<knockedArrow>();
+            Item.shoot = ModContent.ProjectileType<KnockedArrow>();
             Item.shootSpeed = 5f;
             Item.useAmmo = AmmoID.Arrow;
         }
@@ -42,7 +42,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         {
             int consumedAmmoId = source.AmmoItemIdUsed;
             int firedProj = Projectile.NewProjectile(source, position, velocity, Item.shoot, damage, knockback, player.whoAmI);
-            knockedArrow theArrow = (knockedArrow) (Main.projectile[firedProj].ModProjectile);
+            KnockedArrow theArrow = (KnockedArrow) (Main.projectile[firedProj].ModProjectile);
             theArrow.minDrawDepth = Item.width + 5 + 15;
             theArrow.maxDrawDepth = Item.width + 20 + 15;
             theArrow.minShootStrength = 1;
