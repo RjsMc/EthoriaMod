@@ -10,6 +10,10 @@
 
 	<!-- References -->
 	<ItemGroup>
+	  <Folder Include="Assets\Music\" />
+	  <Folder Include="Assets\Textures\" />
+	  <Folder Include="Assets\Sounds\" />
+	  <Folder Include="Common\Sets\" />
 	  <Folder Include="Content\Items\Armor\TestArmorClass\" />
 	</ItemGroup>
 

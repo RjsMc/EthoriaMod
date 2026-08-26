@@ -13,6 +13,24 @@ Items: {
 		DisplayName: Ethoria Exporter
 		Tooltip: ""
 	}
+
+	TesteriteItem: {
+		DisplayName: Testerite Item
+		Tooltip: ""
+	}
+
+	TesteriteGobbery: {
+		DisplayName: Testerite Gobbery
+		Tooltip: ""
+	}
+
+	RawTesterite: {
+		DisplayName: Raw Testerite
+		Tooltip: ""
+	}
 }
 
+Tiles.Testerite.MapEntry: Testerite
+WorldGen.TesteritePassMessage: Mods.EthoriaMod.WorldGen.TesteritePassMessage
+NPCs.TestEnemy.DisplayName: Test Enemy
 Projectiles.knockedArrow.DisplayName: knocked Arrow
