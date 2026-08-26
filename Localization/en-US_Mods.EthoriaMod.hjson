@@ -14,3 +14,5 @@ Items: {
 		Tooltip: ""
 	}
 }
+
+NPCs.TestEnemy.DisplayName: Test Enemy
