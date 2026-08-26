@@ -122,6 +122,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
                 float angle = Projectile.rotation + Projectile.direction * (chargedPercent * float.Pi / 2);
 
+                Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() - (float.Pi / 2));
                 Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, angle);
             }
 
