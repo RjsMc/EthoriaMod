@@ -21,7 +21,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace EthoriaMod.Content.Items.Weapons.Ranged
 {
-    public class knockedArrow : ModProjectile
+    public class KnockedArrow : ModProjectile
     {
 
 
@@ -36,7 +36,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         public int actualType = 0;
 
         public int itemID = 0;
-        public override string Texture => "EthoriaMod/Content/Items/Weapons/Ranged/knockedArrow";
+        public override string Texture => "EthoriaMod/Content/Items/Weapons/Ranged/KnockedArrow";
         private float interpSpd = 0.5f;
 
         private Vector2 shootDirection = new Vector2(0, 0), armPosition = new Vector2(0, 0), tipPosition = new Vector2(0, 0);
@@ -62,13 +62,13 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             Texture2D newTexture = TextureAssets.Item[itemID].Value;
         
 
-            Main.EntitySpriteDraw(newTexture, tipPosition - Main.screenPosition, null, Color.White, Projectile.rotation, newTexture.Size() - new Vector2(newTexture.Width * 0.5f , 0), 1f, 0, 0);
+            Main.EntitySpriteDraw(newTexture, tipPosition - Main.screenPosition, null, lightColor, Projectile.rotation, newTexture.Size() - new Vector2(newTexture.Width * 0.5f , 0), 1f, 0, 0);
 
             
             return false;
         }
 
-        // public override bool? CanDamage() => false;
+        public override bool? CanDamage() => false;
     
  
         public override void AI()
@@ -122,7 +122,8 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
                 float angle = Projectile.rotation + Projectile.direction * (chargedPercent * float.Pi / 2);
 
-                Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, angle);
+                Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() - (float.Pi / 2));
+                Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, angle);
             }
 
 

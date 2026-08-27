@@ -28,9 +28,18 @@ Items: {
 		DisplayName: Raw Testerite
 		Tooltip: ""
 	}
+
+	TestSword: {
+		DisplayName: Test Sword
+		Tooltip: ""
+	}
 }
 
 Tiles.Testerite.MapEntry: Testerite
 WorldGen.TesteritePassMessage: Mods.EthoriaMod.WorldGen.TesteritePassMessage
 NPCs.TestEnemy.DisplayName: Test Enemy
-Projectiles.knockedArrow.DisplayName: knocked Arrow
+
+Projectiles: {
+	knockedArrow.DisplayName: knocked Arrow
+	KnockedArrow.DisplayName: Knocked Arrow
+}

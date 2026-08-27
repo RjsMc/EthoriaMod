@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,11 +10,17 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace EthoriaMod.Content.EthPlayer
 {
     public class EthoriaPlayer : ModPlayer
     {
+
+        public int level = 1;
+        public int currentExp = 0;
+        public int expToSyphon = 0;
+
         public float stamina = 0.0f;
         public float maxStamina = 300.0f;
         private float minStaminaToRun = 10.0f;
@@ -30,6 +37,26 @@ namespace EthoriaMod.Content.EthPlayer
         private int rTap = 0;
 
         private int doubleTapWindow = 15;
+
+
+
+       
+
+        public override void SaveData(TagCompound tag)
+        {
+            tag["level"] = level;
+            tag["currentExp"] = currentExp;
+            tag["expToSyphon"] = expToSyphon;
+        }
+
+        public override void LoadData(TagCompound tag)
+        {
+            level = tag.GetInt("level");
+            currentExp = tag.GetInt("currentExp");
+            expToSyphon = tag.GetInt("expToSyphon");
+
+            this.syphonAllExp();
+        }
 
         public override void PreUpdate()
         {
@@ -51,6 +78,7 @@ namespace EthoriaMod.Content.EthPlayer
       
             lastLeftControl = Player.controlLeft;
             lastRightControl = Player.controlRight;
+            syphonExp();
         }
 
         public override void PostUpdate()
@@ -111,6 +139,54 @@ namespace EthoriaMod.Content.EthPlayer
                 Player.maxRunSpeed *= 2;
             }
 
+        }
+
+        public int expToLevelUp(int level = -1)
+        {
+            if (level == -1) 
+            {
+                level = this.level;
+            }
+
+            return (2 * level - 1) * 30;
+        }
+
+        private void syphonAllExp()
+        {
+
+            currentExp += expToSyphon;
+            expToSyphon = 0;
+
+            while (currentExp >= this.expToLevelUp())
+            {
+                int remainder = currentExp - this.expToLevelUp();
+                level++;
+                currentExp = remainder;
+                Main.NewText("Level Up: " + level.ToString());
+            }
+        }
+
+        private void syphonExp()
+        {
+            if (expToSyphon > 0)
+            {
+                int syphonStep = int.Min(expToSyphon, this.expToLevelUp() / 60);
+                syphonStep = int.Max(syphonStep, 1);
+                expToSyphon -= syphonStep;
+                currentExp += syphonStep;
+            }
+            while (currentExp >= this.expToLevelUp())
+            {
+                int remainder = currentExp - this.expToLevelUp();
+                level++;
+                currentExp = remainder;
+                Main.NewText("Level Up: " + level.ToString());
+            }
+        }
+
+        public void gainExp(int ammount)
+        {
+            this.expToSyphon += ammount;
         }
     }
 }
