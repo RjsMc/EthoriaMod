@@ -59,10 +59,10 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
            
 
             Owner.heldProj = Projectile.whoAmI;
-            Texture2D newTexture = TextureAssets.Item[itemID].Value;
-        
+            Texture2D newTexture = TextureAssets.Projectile[actualType].Value;
+            
 
-            Main.EntitySpriteDraw(newTexture, tipPosition - Main.screenPosition, null, lightColor, Projectile.rotation, newTexture.Size() - new Vector2(newTexture.Width * 0.5f , 0), 1f, 0, 0);
+            Main.EntitySpriteDraw(newTexture, tipPosition - Main.screenPosition, null, lightColor, Projectile.rotation + float.Pi, new Vector2(newTexture.Width * 0.5f , 0), 1f, 0, 0);
 
             
             return false;
