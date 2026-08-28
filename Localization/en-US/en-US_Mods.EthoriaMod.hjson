@@ -33,6 +33,13 @@ Items: {
 		DisplayName: Test Sword
 		Tooltip: ""
 	}
+
+	Placables: {
+		RawTesterite: {
+			DisplayName: Raw Testerite
+			Tooltip: ""
+		}
+	}
 }
 
 Tiles.Testerite.MapEntry: Testerite

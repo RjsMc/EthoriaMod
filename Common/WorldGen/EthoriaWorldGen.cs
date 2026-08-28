@@ -53,7 +53,7 @@ namespace EthoriaMod.Common.WorldGen
             int maxAttempts = 50000;
             int attempts = 0;
 
-            while (structuresPlaced < 4000 && attempts < maxAttempts)
+            while (structuresPlaced < 2 && attempts < maxAttempts)
             {
                 attempts++;
 
