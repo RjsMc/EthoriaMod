@@ -89,11 +89,14 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
                 
                 Projectile.velocity = shootDirection * mag;
-                Owner.itemAnimation = 0;
-                Owner.itemTime = 0;
+                Owner.itemAnimation = 1;
+                Owner.itemTime = 1;
 
                 Projectile.Kill();
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), tipPosition, Projectile.velocity, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                
+                int arrowIdx = Projectile.NewProjectile(Projectile.GetSource_FromThis(), tipPosition, Projectile.velocity, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                Projectile actualArrow = Main.projectile[arrowIdx];
+                actualArrow.rotation = Projectile.velocity.ToRotation() + float.Pi / 2;
             } else
             {
 
@@ -123,7 +126,10 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 float angle = Projectile.rotation + Projectile.direction * (chargedPercent * float.Pi / 2);
 
                 Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() - (float.Pi / 2));
-                Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, angle);
+                List<Player.CompositeArmStretchAmount> armStretches = [  Player.CompositeArmStretchAmount.Full, Player.CompositeArmStretchAmount.ThreeQuarters, Player.CompositeArmStretchAmount.Quarter, Player.CompositeArmStretchAmount.None ];
+                int armIdx = (int) (((float) armStretches.Count) * chargedPercent);
+                Owner.SetCompositeArmFront(true, armStretches[armIdx], Projectile.velocity.ToRotation() - (float.Pi / 2));
+               
             }
 
 
