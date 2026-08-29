@@ -15,21 +15,6 @@ namespace EthoriaMod.Content.Tiles.Ores
 {
     public class Testerite : ModTile
     {
-        public class RawTesterite : ModItem
-        {
-            public override void SetStaticDefaults()
-            {
-                Item.ResearchUnlockCount = 100;
-                ItemID.Sets.SortingPriorityMaterials[Type] = 58; // 58 is for ores
-            }
-
-            public override void SetDefaults()
-            {
-                Item.DefaultToPlaceableTile(ModContent.TileType<Testerite>());
-                Item.Size = new(12);
-                Item.value = 5000;
-            }
-        }
         class TesteriteDust : ModDust
         {
             public override void OnSpawn(Dust dust)
@@ -95,11 +80,13 @@ namespace EthoriaMod.Content.Tiles.Ores
                 int x = WorldGen.genRand.Next(0, Main.maxTilesX); // Only use genRand to ensure it works with terrarias seed system
                 int y = WorldGen.genRand.Next((int)GenVars.worldSurfaceLow, Main.maxTilesY); // Higher Y, lower we are. (int)GenVars.worldSurface ignores from above surface.
 
-                Tile tile = Framing.GetTileSafely(x, y);
-                if (tile.HasTile && tile.TileType == TileID.SnowBlock) // Only generate in the snow biome. You can delete this line to generate throughout the entire world
-                {
-                    WorldGen.TileRunner(x, y, WorldGen.genRand.Next(5, 12), WorldGen.genRand.Next(5, 10), ModContent.TileType<Testerite>());
-                }
+                //Tile tile = Framing.GetTileSafely(x, y);
+                //if (tile.HasTile && tile.TileType == TileID.SnowBlock) // Only generate in the snow biome. You can delete this line to generate throughout the entire world
+                //{
+                //    WorldGen.TileRunner(x, y, WorldGen.genRand.Next(5, 70), WorldGen.genRand.Next(5, 70), ModContent.TileType<Testerite>());
+                //}
+
+                WorldGen.TileRunner(x, y, WorldGen.genRand.Next(5, 12), WorldGen.genRand.Next(5, 10), ModContent.TileType<Testerite>());
             }
         }
     }
