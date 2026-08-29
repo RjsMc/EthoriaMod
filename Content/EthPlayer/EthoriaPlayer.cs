@@ -39,7 +39,7 @@ namespace EthoriaMod.Content.EthPlayer
         private int doubleTapWindow = 15;
 
 
-
+        public SkillTree skillTree;
        
 
         public override void SaveData(TagCompound tag)
@@ -47,6 +47,7 @@ namespace EthoriaMod.Content.EthPlayer
             tag["level"] = level;
             tag["currentExp"] = currentExp;
             tag["expToSyphon"] = expToSyphon;
+            tag["skillTree"] = skillTree;
         }
 
         public override void LoadData(TagCompound tag)
@@ -54,7 +55,7 @@ namespace EthoriaMod.Content.EthPlayer
             level = tag.GetInt("level");
             currentExp = tag.GetInt("currentExp");
             expToSyphon = tag.GetInt("expToSyphon");
-
+            //skillTree = tag.Get<SkillTree>("skillTree");
             this.syphonAllExp();
         }
 

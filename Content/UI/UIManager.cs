@@ -21,6 +21,9 @@ namespace EthoriaMod.Content.UI
             layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate() { StaminaBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
 
             layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { ExpBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+
+            layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { SkillTreeUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+
         }
     }
 }
