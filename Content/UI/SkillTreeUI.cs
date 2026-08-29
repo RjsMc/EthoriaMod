@@ -23,6 +23,8 @@ namespace EthoriaMod.Content.UI
         public static int skillTreeWindowH = 100;
 
         public static bool dragging = false;
+        public static int oldMouseX = -1;
+        public static int oldMouseY = -1;
         public static void Draw(SpriteBatch spriteBatch, Player player)
         {
 
@@ -79,20 +81,34 @@ namespace EthoriaMod.Content.UI
                 Color.White              
             );
             MouseState ms = Mouse.GetState();
-            if (Main.mouseLeft)
+            if (Main.mouseLeft && sourceRect.Contains(new Point(Main.mouseX, Main.mouseY)))
             {
-                //Main.LocalPlayer.mouseInterface = true;
+                Main.LocalPlayer.mouseInterface = true;
                 dragging = true;
             } else
             {
                 dragging = false;
             }
 
-
             if (dragging)
             {
-                displacement.X++;
+                if (oldMouseX != -1)
+                {
+                    displacement.X += Main.mouseX - oldMouseX;
+                }
+                if (oldMouseY != -1)
+                {
+                    displacement.Y += Main.mouseY - oldMouseY;
+                }
+                oldMouseX = Main.mouseX;
+                oldMouseY = Main.mouseY;
+            } else
+            {
+                oldMouseX = -1;
+                oldMouseY = -1;
             }
+
+
         }
     
     }
