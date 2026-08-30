@@ -12,7 +12,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
-namespace EthoriaMod.Content.UI
+namespace EthoriaMod.Content.UI.SkTree
 {
     public class SkillTreeUI : ModSystem
     {
@@ -25,6 +25,25 @@ namespace EthoriaMod.Content.UI
         public static bool dragging = false;
         public static int oldMouseX = -1;
         public static int oldMouseY = -1;
+
+        private static void drawSkillTree(SkillTree skillTree)
+        {
+            SkillTreeNode root = skillTree.root;
+            Queue<SkillTreeNode> queue = new Queue<SkillTreeNode>();
+
+            queue.Enqueue(root);
+
+            while (queue.Count > 0)
+            {
+                SkillTreeNode curr = queue.Dequeue();
+
+                for (int i = 0; i < curr.Children.Count; i++)
+                {
+                    queue.Enqueue(curr.Children[i]);
+                }
+            }
+
+        }
         public static void Draw(SpriteBatch spriteBatch, Player player)
         {
 
@@ -55,6 +74,8 @@ namespace EthoriaMod.Content.UI
                 Main.GameViewMatrix.EffectMatrix);
 
             Utils.DrawBorderString(spriteBatch, "Test", new Vector2(Main.screenWidth / 2.0f, Main.screenHeight / 2.0f) + displacement, Color.White);
+            drawSkillTree(skillTree);
+           
             spriteBatch.End();
 
             graphicsDevice.SetRenderTarget(null);
@@ -81,11 +102,14 @@ namespace EthoriaMod.Content.UI
                 Color.White              
             );
             MouseState ms = Mouse.GetState();
-            if (Main.mouseLeft && sourceRect.Contains(new Point(Main.mouseX, Main.mouseY)))
+            if (sourceRect.Contains(new Point(Main.mouseX, Main.mouseY)))
             {
                 Main.LocalPlayer.mouseInterface = true;
-                dragging = true;
-            } else
+                if (Main.mouseLeft)
+                {
+                    dragging = true;
+                }
+            } else if (!Main.mouseLeft)
             {
                 dragging = false;
             }
