@@ -38,7 +38,9 @@ namespace EthoriaMod.Content.UI
 
             String expBarStr = "Lv " + ethPlayer.level.ToString() + " - " + ethPlayer.currentExp.ToString() + "/" + ethPlayer.expToLevelUp().ToString();
             Utils.DrawBorderString(Main.spriteBatch, expBarStr, drawPos, Color.White);
-         
+
+
+
         }
     }
 }
