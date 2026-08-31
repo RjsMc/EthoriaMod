@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.Pkcs;
 using System.Text;
 using System.Threading.Tasks;
+using EthoriaMod.Content.UI.SkTree;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -39,7 +40,7 @@ namespace EthoriaMod.Content.EthPlayer
         private int doubleTapWindow = 15;
 
 
-        public SkillTree skillTree;
+        public SkillTree skillTree = new SkillTree();
        
 
         public override void SaveData(TagCompound tag)
@@ -47,7 +48,7 @@ namespace EthoriaMod.Content.EthPlayer
             tag["level"] = level;
             tag["currentExp"] = currentExp;
             tag["expToSyphon"] = expToSyphon;
-            tag["skillTree"] = skillTree;
+            //tag["skillTree"] = skillTree;
         }
 
         public override void LoadData(TagCompound tag)

@@ -19,31 +19,14 @@ namespace EthoriaMod.Content.UI.SkTree
         private static RenderTarget2D cutoutSurface;
         public static Vector2 displacement = new Vector2(0, 0);
         public static Vector2 windowPosition = new Vector2(0, 0);
-        public static int skillTreeWindowW = 100;
-        public static int skillTreeWindowH = 100;
+        public static int skillTreeWindowW = 500;
+        public static int skillTreeWindowH = 500;
 
         public static bool dragging = false;
         public static int oldMouseX = -1;
         public static int oldMouseY = -1;
 
-        private static void drawSkillTree(SkillTree skillTree)
-        {
-            SkillTreeNode root = skillTree.root;
-            Queue<SkillTreeNode> queue = new Queue<SkillTreeNode>();
-
-            queue.Enqueue(root);
-
-            while (queue.Count > 0)
-            {
-                SkillTreeNode curr = queue.Dequeue();
-
-                for (int i = 0; i < curr.Children.Count; i++)
-                {
-                    queue.Enqueue(curr.Children[i]);
-                }
-            }
-
-        }
+        
         public static void Draw(SpriteBatch spriteBatch, Player player)
         {
 
@@ -74,7 +57,7 @@ namespace EthoriaMod.Content.UI.SkTree
                 Main.GameViewMatrix.EffectMatrix);
 
             Utils.DrawBorderString(spriteBatch, "Test", new Vector2(Main.screenWidth / 2.0f, Main.screenHeight / 2.0f) + displacement, Color.White);
-            drawSkillTree(skillTree);
+            skillTree.drawSkillTree(spriteBatch, displacement);
            
             spriteBatch.End();
 
@@ -109,7 +92,8 @@ namespace EthoriaMod.Content.UI.SkTree
                 {
                     dragging = true;
                 }
-            } else if (!Main.mouseLeft)
+            }
+            if (!Main.mouseLeft)
             {
                 dragging = false;
             }

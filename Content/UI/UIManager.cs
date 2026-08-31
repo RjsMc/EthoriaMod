@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using Terraria.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using EthoriaMod.Content.UI.SkTree;
 
 namespace EthoriaMod.Content.UI
 {
