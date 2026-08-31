@@ -74,8 +74,11 @@ namespace EthoriaMod.Content.UI.SkTree
                 null,
                 Main.GameViewMatrix.EffectMatrix);
 
-            int midX = (int) (((float) Main.screenWidth) * skillTreeDrawX);
-            int midY = (int) (((float) Main.screenHeight) * skillTreeDrawY);
+            int midX = Main.screenWidth / 2;
+            int midY = Main.screenHeight / 2;
+
+            int drawScreenX = (int)(((float)Main.screenWidth) * skillTreeDrawX);
+            int drawScreenY = (int)(((float)Main.screenHeight) * skillTreeDrawY);
 
             int skillTreeWindowScreenW = (int) (skillTreeWindowW * ((float) Main.screenWidth));
             int skillTreeWindowScreenH = (int) (skillTreeWindowH * ((float) Main.screenHeight));
@@ -86,7 +89,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
             spriteBatch.Draw(
                 cutoutSurface,
-                new Vector2(midX - skillTreeWindowScreenW / 2, midY - skillTreeWindowScreenH / 2),          
+                new Vector2(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2),          
                 sourceRect,               
                 Color.White              
             );
