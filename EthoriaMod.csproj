@@ -7,14 +7,25 @@
 	<PropertyGroup>
 		
 	</PropertyGroup>
+	<ItemGroup>
+	  <AdditionalFiles Remove="Localization\en-US\en-US_Mods.EthoriaMod.TestDialogue.hjson" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Include="Localization\en-US\en-US_Mods.EthoriaMod.TestDialogue.hjson" />
+	</ItemGroup>
 
 	<!-- References -->
 	<ItemGroup>
 	  <Folder Include="Assets\Music\" />
+	  <Folder Include="Assets\Boss\" />
 	  <Folder Include="Assets\Textures\" />
 	  <Folder Include="Assets\Sounds\" />
+	  <Folder Include="Common\Helpers\" />
 	  <Folder Include="Common\Sets\" />
 	  <Folder Include="Content\Items\Armor\TestArmorClass\" />
+	  <Folder Include="Content\Boss\" />
+	  <Folder Include="Content\NewFolder\" />
+	  <Folder Include="Content\NPCs\FriendlyNPCs\" />
 	</ItemGroup>
 
 </Project>
