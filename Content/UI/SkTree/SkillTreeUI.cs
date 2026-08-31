@@ -84,8 +84,10 @@ namespace EthoriaMod.Content.UI.SkTree
             int skillTreeWindowScreenH = (int) (skillTreeWindowH * ((float) Main.screenHeight));
             
             Rectangle sourceRect = new Rectangle(midX - skillTreeWindowScreenW / 2, midY - skillTreeWindowScreenH / 2, skillTreeWindowScreenW, skillTreeWindowScreenH);
-            Main.NewText(sourceRect);
-            spriteBatch.Draw(TextureAssets.MagicPixel.Value, sourceRect, Color.White);
+
+            Rectangle backgroundRect = new Rectangle(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2, skillTreeWindowScreenW, skillTreeWindowScreenH);
+         
+            spriteBatch.Draw(TextureAssets.MagicPixel.Value, backgroundRect, Color.White);
 
             spriteBatch.Draw(
                 cutoutSurface,
@@ -94,7 +96,7 @@ namespace EthoriaMod.Content.UI.SkTree
                 Color.White              
             );
             MouseState ms = Mouse.GetState();
-            if (sourceRect.Contains(new Point(Main.mouseX, Main.mouseY)))
+            if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)))
             {
                 Main.LocalPlayer.mouseInterface = true;
                 if (Main.mouseLeft)

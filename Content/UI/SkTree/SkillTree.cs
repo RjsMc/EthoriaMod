@@ -4,6 +4,7 @@ using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Humanizer.DateTimeHumanizeStrategy;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -126,9 +127,38 @@ namespace EthoriaMod.Content.UI.SkTree
         }
         public void updateChildrenPositions()
         {
-            
-        }
+            Queue<SkillTreeNode> queue = new Queue<SkillTreeNode>();
+            queue.Enqueue(root);
 
+            while (queue.Count > 0)
+            {
+                SkillTreeNode curr = queue.Dequeue();
+                for (int i = 0; i < (int)GrowDirection.enumSize; i++)
+                {
+                    switch ((GrowDirection)i)
+                    {
+                        case GrowDirection.Left:
+
+                            break;
+
+                        case GrowDirection.Right:
+
+                            break;
+
+                        case GrowDirection.Up:
+
+                            break;
+
+
+                        case GrowDirection.Down:
+
+                            break;
+
+                    }
+                }
+            }
+        }
+            
 
         public SkillTree(int dist = 10)
         {

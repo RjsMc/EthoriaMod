@@ -29,10 +29,7 @@ namespace EthoriaMod.Content.EthPlayer
         public bool sprinting = false;
         public float baseSpd = 0.0f;
 
-        private bool lastLeftControl = false;
-        private bool lastRightControl = false;
-        private bool controlLeftPressed = false;
-        private bool controlRightPressed = false;
+        public CustomInputs customInputs;
 
         private int lTap = 0;
         private int rTap = 0;
@@ -41,7 +38,6 @@ namespace EthoriaMod.Content.EthPlayer
 
 
         public SkillTree skillTree = new SkillTree();
-       
 
         public override void SaveData(TagCompound tag)
         {
@@ -57,6 +53,9 @@ namespace EthoriaMod.Content.EthPlayer
             currentExp = tag.GetInt("currentExp");
             expToSyphon = tag.GetInt("expToSyphon");
             //skillTree = tag.Get<SkillTree>("skillTree");
+            
+
+            customInputs = new CustomInputs(Player);
             this.syphonAllExp();
         }
 
@@ -69,24 +68,14 @@ namespace EthoriaMod.Content.EthPlayer
                 stamina = float.Clamp(stamina, 0.0f, maxStamina);
             }
 
-            if (!lastLeftControl) 
-            {
-                controlLeftPressed = Player.controlLeft;
-            }
-            if (!lastRightControl)
-            {
-                controlRightPressed = Player.controlRight;
-            }
-      
-            lastLeftControl = Player.controlLeft;
-            lastRightControl = Player.controlRight;
+            customInputs.PreUpdate();
+            
             syphonExp();
         }
 
         public override void PostUpdate()
         {
-            controlLeftPressed = false;
-            controlRightPressed = false;
+            customInputs.PostUpdate();
             lTap--;
             rTap--;
 
@@ -100,7 +89,7 @@ namespace EthoriaMod.Content.EthPlayer
             float maxSpd = Player.maxRunSpeed;
             float xSpd = float.Abs(Player.velocity.X);
 
-            if (stamina >= minStaminaToRun && rTap > 0 && rTap < doubleTapWindow && controlRightPressed)
+            if (stamina >= minStaminaToRun && rTap > 0 && rTap < doubleTapWindow && customInputs.controlRightPressed)
             {
                 baseSpd = maxSpd;
                 stamina -= minStaminaToRun;
@@ -109,7 +98,7 @@ namespace EthoriaMod.Content.EthPlayer
                     Player.velocity.X = maxSpd;
                 }
                 sprinting = true;
-            } else if (stamina >= minStaminaToRun && lTap > 0 && lTap < doubleTapWindow && controlLeftPressed)
+            } else if (stamina >= minStaminaToRun && lTap > 0 && lTap < doubleTapWindow && customInputs.controlLeftPressed)
             {
                 baseSpd = maxSpd;
                 stamina -= minStaminaToRun;
@@ -124,11 +113,11 @@ namespace EthoriaMod.Content.EthPlayer
                 sprinting = false;
             }
 
-            if (controlLeftPressed)
+            if (customInputs.controlLeftPressed)
             {
                 lTap = doubleTapWindow;
             }
-            if (controlRightPressed)
+            if (customInputs.controlRightPressed)
             {
                 rTap = doubleTapWindow;
             }
