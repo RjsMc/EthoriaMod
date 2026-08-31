@@ -44,6 +44,7 @@ namespace EthoriaMod.Content.UI.SkTree
             if (cutoutSurface == null || cutoutSurface.Width != Main.screenWidth || cutoutSurface.Height != Main.screenHeight)
             {
                 cutoutSurface = new RenderTarget2D(graphicsDevice, Main.screenWidth, Main.screenHeight);
+                skillTree.updateChildrenPositions();
             }
             spriteBatch.End();
 

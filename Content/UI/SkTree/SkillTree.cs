@@ -31,7 +31,7 @@ namespace EthoriaMod.Content.UI.SkTree
             enumSize
         }
         public SkillTreeNode root;
-        public int dist;
+        public int nodeDist;
 
         public class SkillTreeNode
         {
@@ -40,7 +40,6 @@ namespace EthoriaMod.Content.UI.SkTree
             public List<List<SkillTreeNode>> Children;
             public List<SkillTreeNode> Parents;
             public Vector2 drawPos;
-            public int drawX, drawY;
             public string skillName;
             public bool unlocked;
             public GrowDirection growDirection;
@@ -136,35 +135,43 @@ namespace EthoriaMod.Content.UI.SkTree
                 
                 for (int i = 0; i < (int)GrowDirection.enumSize; i++)
                 {
+                    float floatDist = (float) nodeDist;
                     List<SkillTreeNode> directionalChildren = curr.Children[i];
+                    Vector2 delta = new Vector2(curr.drawPos.X, curr.drawPos.Y);
                     switch ((GrowDirection)i)
                     {
                         case GrowDirection.Left:
-
+                            delta.X -= floatDist / Main.screenWidth;
                             break;
 
                         case GrowDirection.Right:
-
+                            delta.X += floatDist / Main.screenWidth;
                             break;
 
                         case GrowDirection.Up:
-
+                            delta.Y -= floatDist / Main.screenHeight;
                             break;
 
 
                         case GrowDirection.Down:
-
+                            delta.Y += floatDist / Main.screenHeight;
                             break;
 
+                    }
+
+                    foreach (SkillTreeNode child in directionalChildren)
+                    {
+                        child.drawPos = delta;
+                      
                     }
                 }
             }
         }
             
 
-        public SkillTree(int dist = 10)
+        public SkillTree(int nodeDist = 100)
         {
-            this.dist = dist;
+            this.nodeDist = nodeDist;
             root = new SkillTreeNode(0.5f, 0.5f, "Start", GrowDirection.None, true);
       
             root.addChild("Warrior", GrowDirection.Left);
