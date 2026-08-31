@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ModLoader.IO;
 using static EthoriaMod.Content.UI.SkTree.SkillTree.SkillTreeNode;
 
 namespace EthoriaMod.Content.UI.SkTree
@@ -37,13 +38,14 @@ namespace EthoriaMod.Content.UI.SkTree
 
             public List<List<SkillTreeNode>> Children;
             public List<SkillTreeNode> Parents;
+            public Vector2 drawPos;
             public int drawX, drawY;
             public string skillName;
             public bool unlocked;
             public GrowDirection growDirection;
             
            
-            public SkillTreeNode(int drawX, int drawY, string skillName, GrowDirection growDirection = GrowDirection.None, bool unlocked = false)
+            public SkillTreeNode(float drawX, float drawY, string skillName, GrowDirection growDirection = GrowDirection.None, bool unlocked = false)
             {
                 Parents = new List<SkillTreeNode>();
                 Children = new List<List<SkillTreeNode>>();
@@ -51,8 +53,8 @@ namespace EthoriaMod.Content.UI.SkTree
                 {
                     Children.Add(new List<SkillTreeNode>());
                 }
-                this.drawX = drawX;
-                this.drawY = drawY;
+               
+                this.drawPos = new Vector2(drawX, drawY);
                 this.skillName = skillName;
                 this.unlocked = unlocked;
                 this.growDirection = growDirection;
@@ -66,8 +68,8 @@ namespace EthoriaMod.Content.UI.SkTree
                 {
                     Children.Add(new List<SkillTreeNode>());
                 }
-                drawX = 0;
-                drawY = 0;
+
+                this.drawPos = new Vector2(0, 0);
                 this.skillName = skillName;
                 this.unlocked = unlocked;
                 this.growDirection = growDirection;
@@ -107,9 +109,11 @@ namespace EthoriaMod.Content.UI.SkTree
             {
 
                 SkillTreeNode curr = queue.Dequeue();
-                Rectangle drawRec = new Rectangle(curr.drawX + (int) displacement.X, curr.drawY + (int) displacement.Y, 10, 10);
-                spriteBatch.Draw(TextureAssets.MagicPixel.Value, drawRec, Color.Black);
-                Main.NewText(drawRec);
+                float drawXScreen = Main.screenWidth * (curr.drawPos.X + displacement.X);
+                float drawYScreen = Main.screenHeight * (curr.drawPos.Y + displacement.Y);
+                Rectangle rect = new Rectangle((int) drawXScreen, (int) drawYScreen, 10, 10);
+                spriteBatch.Draw(TextureAssets.MagicPixel.Value, rect, Color.Black);
+              
                 for (int i = 0; i < (int) GrowDirection.enumSize; i++) { 
                     List<SkillTreeNode> children = curr.Children[i];
                     foreach (SkillTreeNode child in children)
@@ -129,7 +133,7 @@ namespace EthoriaMod.Content.UI.SkTree
         public SkillTree(int dist = 10)
         {
             this.dist = dist;
-            root = new SkillTreeNode(0, 0, "Start", GrowDirection.None, true);
+            root = new SkillTreeNode(0.5f, 0.5f, "Start", GrowDirection.None, true);
       
             root.addChild("Warrior", GrowDirection.Left);
             root.addChild("Ranger", GrowDirection.Right);

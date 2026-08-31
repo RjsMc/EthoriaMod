@@ -19,8 +19,10 @@ namespace EthoriaMod.Content.UI.SkTree
         private static RenderTarget2D cutoutSurface;
         public static Vector2 displacement = new Vector2(0, 0);
         public static Vector2 windowPosition = new Vector2(0, 0);
-        public static int skillTreeWindowW = 500;
-        public static int skillTreeWindowH = 500;
+        public static float skillTreeDrawX = 0.5f;
+        public static float skillTreeDrawY = 0.2f;
+        public static float skillTreeWindowW = 0.5f;
+        public static float skillTreeWindowH = 0.3f;
 
         public static bool dragging = false;
         public static int oldMouseX = -1;
@@ -37,7 +39,7 @@ namespace EthoriaMod.Content.UI.SkTree
             GraphicsDevice graphicsDevice = Main.instance.GraphicsDevice;
             graphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 
-            if (cutoutSurface == null)
+            if (cutoutSurface == null || cutoutSurface.Width != Main.screenWidth || cutoutSurface.Height != Main.screenHeight)
             {
                 cutoutSurface = new RenderTarget2D(graphicsDevice, Main.screenWidth, Main.screenHeight);
             }
@@ -72,15 +74,19 @@ namespace EthoriaMod.Content.UI.SkTree
                 null,
                 Main.GameViewMatrix.EffectMatrix);
 
-            int midX = Main.screenWidth / 2;
-            int midY = Main.screenHeight / 2;
-            Rectangle sourceRect = new Rectangle(midX - skillTreeWindowW / 2, midY - skillTreeWindowH / 2, skillTreeWindowW, skillTreeWindowH);
+            int midX = (int) (((float) Main.screenWidth) * skillTreeDrawX);
+            int midY = (int) (((float) Main.screenHeight) * skillTreeDrawY);
 
+            int skillTreeWindowScreenW = (int) (skillTreeWindowW * ((float) Main.screenWidth));
+            int skillTreeWindowScreenH = (int) (skillTreeWindowH * ((float) Main.screenHeight));
+            
+            Rectangle sourceRect = new Rectangle(midX - skillTreeWindowScreenW / 2, midY - skillTreeWindowScreenH / 2, skillTreeWindowScreenW, skillTreeWindowScreenH);
+            Main.NewText(sourceRect);
             spriteBatch.Draw(TextureAssets.MagicPixel.Value, sourceRect, Color.White);
 
             spriteBatch.Draw(
                 cutoutSurface,
-                new Vector2(midX - skillTreeWindowW / 2, midY - skillTreeWindowH / 2),          
+                new Vector2(midX - skillTreeWindowScreenW / 2, midY - skillTreeWindowScreenH / 2),          
                 sourceRect,               
                 Color.White              
             );
@@ -102,11 +108,11 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 if (oldMouseX != -1)
                 {
-                    displacement.X += Main.mouseX - oldMouseX;
+                    displacement.X += ((float) (Main.mouseX - oldMouseX)) / Main.screenWidth;
                 }
                 if (oldMouseY != -1)
                 {
-                    displacement.Y += Main.mouseY - oldMouseY;
+                    displacement.Y += ((float) (Main.mouseY - oldMouseY)) / Main.screenHeight;
                 }
                 oldMouseX = Main.mouseX;
                 oldMouseY = Main.mouseY;
