@@ -9,7 +9,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
-namespace EthoriaMod.Common.Developer
+namespace EthoriaMod.Common.Helpers
 {
     public class HelperFunctions
     {
@@ -18,7 +18,7 @@ namespace EthoriaMod.Common.Developer
             if (start == end)
                 return;
 
-            Texture2D pixel = ModContent.Request<Texture2D>("EthoriaMod/Common/Developer/Pixel").Value;
+            Texture2D pixel = ModContent.Request<Texture2D>("EthoriaMod/Common/Helpers/Pixel").Value;
             float rotation = (end - start).ToRotation();
             Vector2 scale = new Vector2(Vector2.Distance(start, end) / pixel.Width, width);
 
