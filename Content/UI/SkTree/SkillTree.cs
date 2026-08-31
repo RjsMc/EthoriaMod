@@ -133,8 +133,10 @@ namespace EthoriaMod.Content.UI.SkTree
             while (queue.Count > 0)
             {
                 SkillTreeNode curr = queue.Dequeue();
+                
                 for (int i = 0; i < (int)GrowDirection.enumSize; i++)
                 {
+                    List<SkillTreeNode> directionalChildren = curr.Children[i];
                     switch ((GrowDirection)i)
                     {
                         case GrowDirection.Left:

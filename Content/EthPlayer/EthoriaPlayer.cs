@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -58,7 +59,7 @@ namespace EthoriaMod.Content.EthPlayer
             customInputs = new CustomInputs(Player);
             this.syphonAllExp();
         }
-
+        
         public override void PreUpdate()
         {
 
@@ -75,12 +76,19 @@ namespace EthoriaMod.Content.EthPlayer
 
         public override void PostUpdate()
         {
-            customInputs.PostUpdate();
             lTap--;
             rTap--;
 
         }
-
+        public override void ProcessTriggers(TriggersSet triggersSet)
+        {
+           
+            if (PlayerInput.Triggers.JustPressed.MouseLeft)
+            {
+                // This logic will run exactly once per click
+                Main.NewText("Left mouse button was clicked once!");
+            }
+        }
         public override void PreUpdateMovement()
         {
 

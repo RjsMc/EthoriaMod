@@ -15,11 +15,9 @@ namespace EthoriaMod.Content.EthPlayer
 
         public bool lastLeftControl = false;
         public bool lastRightControl = false;
-        public bool lastLeftClick = false;
 
         public bool controlLeftPressed = false;
         public bool controlRightPressed = false;
-        public bool leftClickPressed = false;
 
         public CustomInputs(Player owner)
         {
@@ -27,6 +25,9 @@ namespace EthoriaMod.Content.EthPlayer
         }
         public void PreUpdate()
         {
+
+            controlLeftPressed = false;
+            controlRightPressed = false;
             if (!lastLeftControl)
             {
                 controlLeftPressed = owner.controlLeft;
@@ -35,20 +36,11 @@ namespace EthoriaMod.Content.EthPlayer
             {
                 controlRightPressed = owner.controlRight;
             }
-            if (!lastLeftClick)
-            {
-                leftClickPressed = Main.mouseLeft;
-            }
+     
             lastLeftControl = owner.controlLeft;
             lastRightControl = owner.controlRight;
-            lastLeftClick = Main.mouseLeft;
+
         }
-        
-        public void PostUpdate()
-        {
-            controlLeftPressed = false;
-            controlRightPressed = false;
-            leftClickPressed = false;
-        }
+    
     }
 }

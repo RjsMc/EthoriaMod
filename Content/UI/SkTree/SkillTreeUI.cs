@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Microsoft.Xna.Framework.Input;
 using Steamworks;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.GameInput;
 using Terraria.ModLoader;
 
 namespace EthoriaMod.Content.UI.SkTree
@@ -31,7 +33,7 @@ namespace EthoriaMod.Content.UI.SkTree
         
         public static void Draw(SpriteBatch spriteBatch, Player player)
         {
-
+        
             EthoriaPlayer ethPlayer = player.GetModPlayer<EthoriaPlayer>();
             SkillTree skillTree = ethPlayer.skillTree;
             Vector2 drawPos = new Vector2(Main.screenWidth / 2.0f, 100);
@@ -98,8 +100,9 @@ namespace EthoriaMod.Content.UI.SkTree
             MouseState ms = Mouse.GetState();
             if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)))
             {
+                
                 Main.LocalPlayer.mouseInterface = true;
-                if (Main.mouseLeft)
+                if (Main.mouseLeft && Main.mouseLeftRelease)
                 {
                     dragging = true;
                 }
