@@ -1,0 +1,67 @@
+StartNode: Hello
+
+Nodes: {
+	Hello: {
+		Speaker: Test
+		Text: YOOOOOO HOW IT GOIIIIING WHAT'S GOOOOOOOOOOOD?!?!?!?!?!
+
+		Prompts: {
+			0: {
+				Text: uhh..
+				NextNode: HelloReply1
+			}
+
+			1: {
+				Text: YOOOOOOOO
+				NextNode: HelloReply2
+			}
+
+			2: {
+				Text: Cut to the chase
+				NextNode: HelloReply3
+			}
+		}
+	}
+
+	HelloReply1: {
+		Speaker: Test
+		Text: i hate you stfu
+
+		Prompts: {
+			0: {
+				Text: oh wow ok
+				NextNode: End
+			}
+
+			1: {
+				Text: ":("
+				NextNode: End
+			}
+		}
+	}
+
+	HelloReply2: {
+		Speaker: Test
+		Text: HAVE A GOOD ONE MAAAAAN
+
+		Prompts: {
+			0: {
+				Text: YEAAAAAAAAAAAAAAAH
+				NextNode: End
+			}
+
+			1: {
+				Text: ok
+				NextNode: End
+			}
+		}
+	}
+
+	HelloReply3: {
+		Speaker: Test
+		Text: not nice.
+		NextNode: End
+	}
+
+	End.Action: End
+}
