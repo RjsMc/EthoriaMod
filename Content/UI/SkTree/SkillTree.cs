@@ -4,7 +4,9 @@ using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EthoriaMod.Common.Developer;
 using Humanizer.DateTimeHumanizeStrategy;
+using log4net.DateFormatter;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -32,7 +34,7 @@ namespace EthoriaMod.Content.UI.SkTree
         }
         public SkillTreeNode root;
         public int nodeDist;
-
+        public static int defaultSize = 10;
         public class SkillTreeNode
         {
             
@@ -43,8 +45,9 @@ namespace EthoriaMod.Content.UI.SkTree
             public string skillName;
             public bool unlocked;
             public GrowDirection growDirection;
-            
-           
+            public int w;
+            public int h;
+
             public SkillTreeNode(float drawX, float drawY, string skillName, GrowDirection growDirection = GrowDirection.None, bool unlocked = false)
             {
                 Parents = new List<SkillTreeNode>();
@@ -58,6 +61,9 @@ namespace EthoriaMod.Content.UI.SkTree
                 this.skillName = skillName;
                 this.unlocked = unlocked;
                 this.growDirection = growDirection;
+
+                w = defaultSize;
+                h = defaultSize;
             }
 
             public SkillTreeNode(string skillName, GrowDirection growDirection = GrowDirection.None, bool unlocked = false)
@@ -73,6 +79,8 @@ namespace EthoriaMod.Content.UI.SkTree
                 this.skillName = skillName;
                 this.unlocked = unlocked;
                 this.growDirection = growDirection;
+                w = defaultSize;
+                h = defaultSize;
             }
 
             public SkillTreeNode addChild(string skillName)
@@ -109,15 +117,22 @@ namespace EthoriaMod.Content.UI.SkTree
             {
 
                 SkillTreeNode curr = queue.Dequeue();
-                float drawXScreen = Main.screenWidth * (curr.drawPos.X + displacement.X);
-                float drawYScreen = Main.screenHeight * (curr.drawPos.Y + displacement.Y);
-                Rectangle rect = new Rectangle((int) drawXScreen, (int) drawYScreen, 10, 10);
+                int drawXScreen = (int) (Main.screenWidth * (curr.drawPos.X + displacement.X));
+                int drawYScreen = (int) (Main.screenHeight * (curr.drawPos.Y + displacement.Y));
+                Rectangle rect = new Rectangle(drawXScreen - defaultSize / 2, drawYScreen - defaultSize / 2, defaultSize, defaultSize);
                 spriteBatch.Draw(TextureAssets.MagicPixel.Value, rect, Color.Black);
               
                 for (int i = 0; i < (int) GrowDirection.enumSize; i++) { 
                     List<SkillTreeNode> children = curr.Children[i];
+
+
                     foreach (SkillTreeNode child in children)
                     {
+
+                        int childDrawXScreen = (int)(Main.screenWidth * (child.drawPos.X + displacement.X));
+                        int childDrawYScreen = (int)(Main.screenHeight * (child.drawPos.Y + displacement.Y));
+                        HelperFunctions.drawLine(spriteBatch, new Vector2(drawXScreen, drawYScreen), new Vector2(childDrawXScreen, childDrawYScreen), Color.Black);
+
                         queue.Enqueue(child);
                     }
                 }
@@ -138,31 +153,51 @@ namespace EthoriaMod.Content.UI.SkTree
                     float floatDist = (float) nodeDist;
                     List<SkillTreeNode> directionalChildren = curr.Children[i];
                     Vector2 delta = new Vector2(curr.drawPos.X, curr.drawPos.Y);
+                    Vector2 childDirection = new Vector2(0, 0);
+                    
                     switch ((GrowDirection)i)
                     {
                         case GrowDirection.Left:
                             delta.X -= floatDist / Main.screenWidth;
+                            childDirection.Y++;
                             break;
 
                         case GrowDirection.Right:
                             delta.X += floatDist / Main.screenWidth;
+                            childDirection.Y++;
                             break;
 
                         case GrowDirection.Up:
                             delta.Y -= floatDist / Main.screenHeight;
+                            childDirection.X++;
                             break;
 
 
                         case GrowDirection.Down:
                             delta.Y += floatDist / Main.screenHeight;
+                            childDirection.X++;
                             break;
 
                     }
-
+                    int c = 0;
                     foreach (SkillTreeNode child in directionalChildren)
                     {
-                        child.drawPos = delta;
-                      
+                        Vector2 midPos = delta;
+                        Vector2 scaleRatio = new Vector2(Main.screenWidth, Main.screenHeight);
+                        int numChildren = directionalChildren.Count;
+
+                        int childrenSpan = nodeDist * (numChildren - 1) + (defaultSize * numChildren);
+
+
+                        Vector2 startPos = midPos - (childDirection * ((childrenSpan / 2) - (defaultSize / 2))) / scaleRatio;
+
+                        startPos += (childDirection * ((defaultSize * c) + (nodeDist * c))) / scaleRatio;
+
+                        child.drawPos = startPos;
+                        queue.Enqueue(child);
+
+
+                        c++;
                     }
                 }
             }
@@ -177,7 +212,9 @@ namespace EthoriaMod.Content.UI.SkTree
             root.addChild("Warrior", GrowDirection.Left);
             root.addChild("Ranger", GrowDirection.Right);
             root.addChild("Mage", GrowDirection.Up);
-            root.addChild("Summoner", GrowDirection.Down);
+            SkillTreeNode summoner = root.addChild("Summoner", GrowDirection.Down);
+            summoner.addChild("Fireball");
+            summoner.addChild("BigBalls");
 
 
             updateChildrenPositions();
