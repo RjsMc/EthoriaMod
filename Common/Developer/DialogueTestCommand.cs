@@ -1,46 +1,74 @@
 ﻿using EthoriaMod.Content.Dialogue;
 using EthoriaMod.Content.Dialogue.NPCDialogueHandlers;
-using EthoriaMod.Content.UI.Dialogue;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
-using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace EthoriaMod.Common.Developer
 {
-    internal class DialogueTestCommand : ModCommand // Command to test starting node of dialogue
+    internal class DialogueTestCommand : ModCommand
     {
         public override CommandType Type => CommandType.Chat;
         public override string Command => "dialoguetest";
-        public override string Description => "Test the starting node for dialogue";
+        public override string Description => "Test the dialogue system";
         public override string Usage => "/dialoguetest";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
+            // Load the dialogue
             TestNPCDialogue.Load();
 
             Dialogue dialogue = TestNPCDialogue.Dialogue;
 
-            caller.Reply($"Start Node: {dialogue.StartNode}");
+            caller.Reply("=== Dialogue Test ===");
 
-            if (dialogue.StartNode == null)
+            // Create a session
+            DialogueSession session = new(dialogue);
+
+            // Show starting node
+            PrintCurrentNode(caller, session);
+
+            // Select prompt 0
+            caller.Reply("");
+            caller.Reply("Selecting prompt 0...");
+
+            if (session.SelectPrompt(0))
             {
-                caller.Reply("StartNode is null!");
-                return;
+                PrintCurrentNode(caller, session);
+            }
+            else
+            {
+                caller.Reply("Failed to select prompt 0.");
             }
 
-            if (!dialogue.Nodes.TryGetValue(dialogue.StartNode, out DialogueNode node))
+            // Select prompt 0 again
+            caller.Reply("");
+            caller.Reply("Selecting prompt 0 again...");
+
+            if (session.SelectPrompt(0))
             {
-                caller.Reply($"Could not find node '{dialogue.StartNode}'!");
-                return;
+                PrintCurrentNode(caller, session);
+            }
+            else
+            {
+                caller.Reply("Failed to select prompt 0.");
             }
 
-            caller.Reply($"Speaker: {node.Speaker}");
-            caller.Reply($"Text: {node.Text}");
+            caller.Reply("");
+            caller.Reply("=== Test Complete ===");
+        }
+
+        private static void PrintCurrentNode(
+            CommandCaller caller,
+            DialogueSession session)
+        {
+            DialogueNode node = session.CurrentNode;
+
+            caller.Reply($"Node: {node.Id}");
+            caller.Reply($"Speaker: {node.Speaker ?? "(none)"}");
+            caller.Reply($"Text: {node.Text ?? "(none)"}");
+            caller.Reply($"NextNode: {node.NextNode ?? "(none)"}");
+            caller.Reply($"Action: {node.Action ?? "(none)"}");
             caller.Reply($"Prompts: {node.Prompts.Count}");
 
             for (int i = 0; i < node.Prompts.Count; i++)
@@ -48,11 +76,10 @@ namespace EthoriaMod.Common.Developer
                 DialoguePrompt prompt = node.Prompts[i];
 
                 caller.Reply(
-                    $"{i}: {prompt.Text} -> {prompt.NextNode}"
+                    $"  [{i}] {prompt.Text} -> {prompt.NextNode}"
                 );
             }
-
-            ModContent.GetInstance<DialogueUISystem>().ShowDialogue();
         }
     }
 }
+

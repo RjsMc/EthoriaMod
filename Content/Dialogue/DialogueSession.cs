@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace EthoriaMod.Content.Dialogue
@@ -18,14 +19,23 @@ namespace EthoriaMod.Content.Dialogue
 
         public bool Advance()
         {
-            if (CurrentNode.NextNode == null)
-            {
-                return false;
-            }
+            if (CurrentNode.NextNode == null) { return false; }
 
             CurrentNode = Dialogue.Nodes[CurrentNode.NextNode];
+            return true;
+        }
 
-            return true; ;
+        public bool SelectPrompt(int index)
+        {
+            if (index < 0 || index >= CurrentNode.Prompts.Count) { return false; } // Wont accidentally pick unpickable prompt
+
+            DialoguePrompt prompt = CurrentNode.Prompts[index];
+
+            if (prompt.NextNode == null) { return false; }
+
+            CurrentNode = Dialogue.Nodes[prompt.NextNode];
+
+            return true;
         }
     }
 }
