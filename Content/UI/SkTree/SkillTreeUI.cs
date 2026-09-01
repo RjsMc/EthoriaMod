@@ -54,6 +54,7 @@ namespace EthoriaMod.Content.UI.SkTree
             switch (state)
             {
                 case SkillTreeState.Closed:
+
                     if (Main.mouseRight && Main.mouseRightRelease)
                     {
                         state = SkillTreeState.Open;

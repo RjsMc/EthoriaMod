@@ -34,7 +34,9 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         public int currentChargingFrames = 0;
         public int maxChargingFrames = 1000;
         public int actualType = 0;
-
+        public int bowId = 0;
+        public int minChargingFrames = 0;
+        public bool autoReuse = false;
         public int itemID = 0;
         public override string Texture => "EthoriaMod/Content/Items/Weapons/Ranged/KnockedArrow";
         private float interpSpd = 0.5f;
@@ -55,14 +57,20 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
  
         public override bool PreDraw(ref Color lightColor)
         {
+            Vector2 worldPixelPos = tipPosition; // Example position
 
-           
+            // 2. Convert pixel position to tile coordinates
+            int tileX = (int)(worldPixelPos.X / 16f);
+            int tileY = (int)(worldPixelPos.Y / 16f);
 
+            // 3. Get the lighting color at that tile
+            Color color = Lighting.GetColor(tileX, tileY);
+            
             Owner.heldProj = Projectile.whoAmI;
             Texture2D newTexture = TextureAssets.Projectile[actualType].Value;
             
 
-            Main.EntitySpriteDraw(newTexture, tipPosition - Main.screenPosition, null, lightColor, Projectile.rotation + float.Pi, new Vector2(newTexture.Width * 0.5f , 0), 1f, 0, 0);
+            Main.EntitySpriteDraw(newTexture, tipPosition - Main.screenPosition, null, color, Projectile.rotation + float.Pi, new Vector2(newTexture.Width * 0.5f , 0), 1f, 0, 0);
 
             
             return false;
@@ -74,15 +82,16 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         public override void AI()
         {
             currentChargingFrames++;
+            currentChargingFrames = int.Min(maxChargingFrames, currentChargingFrames);
             
-            float chargedPercent = (float)currentChargingFrames / (float)maxChargingFrames;
+            float chargedPercent = float.Min(1, (float)currentChargingFrames / (float)maxChargingFrames);
             float mag = minShootStrength + (maxShootStrength - minShootStrength) * chargedPercent;
 
             shootDirection = Projectile.velocity.SafeNormalize(Vector2.UnitX * Owner.direction);
             armPosition = Owner.RotatedRelativePoint(Owner.MountedCenter, true);
             tipPosition = armPosition + shootDirection * (maxDrawDepth - chargedPercent * (maxDrawDepth - minDrawDepth));
-
-            if (!Main.mouseLeft || Owner.itemAnimation <= 1)
+            
+            if (!Main.mouseLeft || (Owner.itemAnimation <= 1 && autoReuse))
             {
 
                 Projectile.aiStyle = ProjAIStyleID.Arrow;
@@ -93,13 +102,19 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 Owner.itemTime = 1;
 
                 Projectile.Kill();
-                
-                int arrowIdx = Projectile.NewProjectile(Projectile.GetSource_FromThis(), tipPosition, Projectile.velocity, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
-                Projectile actualArrow = Main.projectile[arrowIdx];
-                actualArrow.rotation = Projectile.velocity.ToRotation() + float.Pi / 2;
+
+                if (currentChargingFrames >= minChargingFrames) {
+                    int arrowIdx = Projectile.NewProjectile(Projectile.GetSource_FromThis(), tipPosition, Projectile.velocity, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                    Projectile actualArrow = Main.projectile[arrowIdx];
+                    actualArrow.rotation = Projectile.velocity.ToRotation() + float.Pi / 2;
+                }
             } else
             {
-
+                if (Owner.itemAnimation <= 1)
+                {
+                    Owner.itemAnimation = 2;
+                    Owner.itemTime = 2;
+                }
 
                 Projectile.rotation = Projectile.velocity.ToRotation() - float.Pi / 2;
 
@@ -126,8 +141,8 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 float angle = Projectile.rotation + Projectile.direction * (chargedPercent * float.Pi / 2);
 
                 Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Full, Projectile.velocity.ToRotation() - (float.Pi / 2));
-                List<Player.CompositeArmStretchAmount> armStretches = [  Player.CompositeArmStretchAmount.Full, Player.CompositeArmStretchAmount.ThreeQuarters, Player.CompositeArmStretchAmount.Quarter, Player.CompositeArmStretchAmount.None ];
-                int armIdx = (int) (((float) armStretches.Count) * chargedPercent);
+                List<Player.CompositeArmStretchAmount> armStretches = [ Player.CompositeArmStretchAmount.Full, Player.CompositeArmStretchAmount.ThreeQuarters, Player.CompositeArmStretchAmount.Quarter, Player.CompositeArmStretchAmount.None, Player.CompositeArmStretchAmount.None];
+                int armIdx = (int) (((float) (armStretches.Count - 1)) * chargedPercent);
                 Owner.SetCompositeArmFront(true, armStretches[armIdx], Projectile.velocity.ToRotation() - (float.Pi / 2));
                
             }
