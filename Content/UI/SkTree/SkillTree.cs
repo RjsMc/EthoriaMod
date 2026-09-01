@@ -280,15 +280,20 @@ namespace EthoriaMod.Content.UI.SkTree
 
         public static SkillTree Load(TagCompound tag)
         {
-            List<SkillTreeNode> savedNodes = (List<SkillTreeNode>)tag.GetList<SkillTreeNode>("nodeList");
             SkillTree ret = new SkillTree();
-            List<SkillTreeNode> l = ret.nodeList;
 
-            for (int i = 0; i < l.Count; i++)
+            if (tag.ContainsKey("nodeList"))
             {
-                l[i].unlocked = savedNodes[i].unlocked;   
+                List<SkillTreeNode> savedNodes = (List<SkillTreeNode>)tag.GetList<SkillTreeNode>("nodeList");
+                List<SkillTreeNode> l = ret.nodeList;
+
+                for (int i = 0; i < l.Count; i++)
+                {
+                    l[i].unlocked = savedNodes[i].unlocked;
+                }
             }
             return ret;
+
         }
 
         public static Func<TagCompound, SkillTree> DESERIALIZER = Load;
