@@ -18,19 +18,32 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         
         public static float minShootStrength = 1.0f;
 
-        public static List<int> exclude = [ItemID.Tsunami, ItemID.FairyQueenRangedItem, ItemID.HellwingBow, ItemID.PulseBow, ItemID.GoldBow];
+        public static List<int> exclude = [3854, ItemID.Phantasm, ItemID.Tsunami, ItemID.FairyQueenRangedItem, ItemID.HellwingBow, ItemID.PulseBow, ItemID.GoldBow];
         public override void SetDefaults(Item item)
         {
             if (!exclude.Contains(item.type) && item.useAmmo == AmmoID.Arrow && item.shoot > ProjectileID.None)
             {
+
                 item.useTime = item.useAnimation;
                 item.useStyle = ItemUseStyleID.Shoot;
+
+                item.channel = true;
+                
                 item.shoot = ModContent.ProjectileType<KnockedArrow>();
                 item.UseSound = null;
             }
         }
 
-     
+        public override bool CanConsumeAmmo(Item weapon, Item ammo, Player player)
+        {
+       
+            if (!exclude.Contains(weapon.type) && weapon.useAmmo == AmmoID.Arrow && weapon.shoot > ProjectileID.None)
+            {
+                return false;
+            }
+            return true;
+        }   
+
         
         public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {

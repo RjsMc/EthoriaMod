@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using EthoriaMod.Common.Helpers;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -97,11 +98,12 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 Projectile.velocity = shootDirection * mag;
                 Owner.itemAnimation = 1;
                 Owner.itemTime = 1;
-
                 Projectile.Kill();
-
                 if (currentChargingFrames >= minChargingFrames) {
                     int arrowIdx = Projectile.NewProjectile(Projectile.GetSource_FromThis(), tipPosition, Projectile.velocity, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+
+                    HelperFunctions.consumeAmmoForced(Owner, Owner.HeldItem, 1);
+                    
                     Projectile actualArrow = Main.projectile[arrowIdx];
                     actualArrow.rotation = Projectile.velocity.ToRotation() + float.Pi / 2;
                 }
