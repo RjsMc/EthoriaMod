@@ -1,5 +1,6 @@
 ﻿using EthoriaMod.Content.Dialogue;
 using EthoriaMod.Content.Dialogue.NPCDialogueHandlers;
+using EthoriaMod.Content.UI.Dialogue;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,6 +51,8 @@ namespace EthoriaMod.Common.Developer
                     $"{i}: {prompt.Text} -> {prompt.NextNode}"
                 );
             }
+
+            ModContent.GetInstance<DialogueUISystem>().ShowDialogue();
         }
     }
 }
