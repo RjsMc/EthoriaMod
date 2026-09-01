@@ -8,6 +8,12 @@
 		
 	</PropertyGroup>
 	<ItemGroup>
+	  <AdditionalFiles Remove="Content\NewFolder\**" />
+	  <Compile Remove="Content\NewFolder\**" />
+	  <EmbeddedResource Remove="Content\NewFolder\**" />
+	  <None Remove="Content\NewFolder\**" />
+	</ItemGroup>
+	<ItemGroup>
 	  <AdditionalFiles Remove="Localization\en-US\en-US_Mods.EthoriaMod.TestDialogue.hjson" />
 	</ItemGroup>
 	<ItemGroup>
@@ -20,11 +26,9 @@
 	  <Folder Include="Assets\Boss\" />
 	  <Folder Include="Assets\Textures\" />
 	  <Folder Include="Assets\Sounds\" />
-	  <Folder Include="Common\Helpers\" />
 	  <Folder Include="Common\Sets\" />
 	  <Folder Include="Content\Items\Armor\TestArmorClass\" />
 	  <Folder Include="Content\Boss\" />
-	  <Folder Include="Content\NewFolder\" />
 	  <Folder Include="Content\NPCs\FriendlyNPCs\" />
 	</ItemGroup>
 

@@ -10,6 +10,7 @@ using log4net.DateFormatter;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ReLogic.Utilities;
 using Terraria;
 using Terraria.GameContent;
@@ -105,22 +106,42 @@ namespace EthoriaMod.Content.UI.SkTree
             }
         }
 
-        public void drawSkillTree(SpriteBatch spriteBatch, Vector2 displacement)
+        public void drawSkillTree(SpriteBatch spriteBatch, Vector2 displacement, Vector2 cutoutPosition, Vector2 windowPosition, Rectangle backgroundRect)
         {
             SkillTreeNode root = this.root;
             Queue<SkillTreeNode> queue = new Queue<SkillTreeNode>();
 
             queue.Enqueue(root);
 
-            
-            while (queue.Count > 0)
+
+            while (queue.Count > 0) 
             {
 
                 SkillTreeNode curr = queue.Dequeue();
-                int drawXScreen = (int) (Main.screenWidth * (curr.drawPos.X + displacement.X));
-                int drawYScreen = (int) (Main.screenHeight * (curr.drawPos.Y + displacement.Y));
+                int drawXScreen = (int)(Main.screenWidth * (curr.drawPos.X + displacement.X));
+                int drawYScreen = (int)(Main.screenHeight * (curr.drawPos.Y + displacement.Y));
                 Rectangle rect = new Rectangle(drawXScreen - defaultSize / 2, drawYScreen - defaultSize / 2, defaultSize, defaultSize);
-                spriteBatch.Draw(TextureAssets.MagicPixel.Value, rect, Color.Black);
+
+                int windowDx = (int) (windowPosition.X - cutoutPosition.X);
+                int windowDy = (int) (windowPosition.Y - cutoutPosition.Y);
+
+
+                Rectangle nodeRect = new Rectangle(drawXScreen + windowDx - defaultSize / 2, drawYScreen + windowDy - defaultSize / 2, defaultSize, defaultSize);
+                Color color = Color.Black;
+                if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)) && nodeRect.Contains(new Point(Main.mouseX , Main.mouseY)))
+                {
+                    color = Color.Yellow;
+                    if (Main.mouseLeft && Main.mouseLeftRelease)
+                    {
+                        curr.unlock();
+                    }
+                }
+
+                if (curr.unlocked)
+                {
+                    color = Color.Green;
+                }
+
               
                 for (int i = 0; i < (int) GrowDirection.enumSize; i++) { 
                     List<SkillTreeNode> children = curr.Children[i];
@@ -136,6 +157,9 @@ namespace EthoriaMod.Content.UI.SkTree
                         queue.Enqueue(child);
                     }
                 }
+
+
+                spriteBatch.Draw(TextureAssets.MagicPixel.Value, rect, color);
             }
 
         }
