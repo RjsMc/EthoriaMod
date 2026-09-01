@@ -107,7 +107,16 @@ namespace EthoriaMod.Content.UI.SkTree
                 return child;
             }
 
-            
+            public void changeLockState()
+            {
+                if (unlocked)
+                {
+                    unlocked = false;
+                } else
+                {
+                    unlocked = true;
+                }
+            }
             public void unlock()
             {
                 unlocked = true;
@@ -182,7 +191,8 @@ namespace EthoriaMod.Content.UI.SkTree
                     color = Color.Yellow;
                     if (Main.mouseLeft && Main.mouseLeftRelease)
                     {
-                        curr.unlock();
+                        
+                        curr.changeLockState();
                     }
                 }
 
