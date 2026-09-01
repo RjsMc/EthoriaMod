@@ -13,9 +13,12 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json.Linq;
+using rail;
 using ReLogic.Utilities;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using static EthoriaMod.Content.UI.SkTree.SkillTree.SkillTreeNode;
 
@@ -109,6 +112,13 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 unlocked = true;
             }
+            public void unlock(bool state)
+            {
+                if (!unlocked && state)
+                {
+                    unlocked = true;
+                }
+            }
 
             public TagCompound SerializeData()
             {
@@ -128,6 +138,23 @@ namespace EthoriaMod.Content.UI.SkTree
             public static Func<TagCompound, SkillTreeNode> DESERIALIZER = Load;
         }
 
+        public SkillTree(int nodeDist = 100)
+        {
+            this.nodeDist = nodeDist;
+            root = new SkillTreeNode(0.5f, 0.5f, "Start", GrowDirection.None, true);
+            nodeList = new List<SkillTreeNode>();
+            nodeList.Add(root);
+
+            root.addChild("Warrior", GrowDirection.Left, nodeList);
+            root.addChild("Ranger", GrowDirection.Right, nodeList);
+            root.addChild("Mage", GrowDirection.Up, nodeList);
+            SkillTreeNode summoner = root.addChild("Summoner", GrowDirection.Down, nodeList);
+            summoner.addChild("Fireball", nodeList);
+            summoner.addChild("BigBalls", nodeList);
+
+
+            updateChildrenPositions();
+        }
         public void drawSkillTree(SpriteBatch spriteBatch, Vector2 displacement, Vector2 cutoutPosition, Vector2 windowPosition, Rectangle backgroundRect)
         {
             SkillTreeNode root = this.root;
@@ -249,25 +276,16 @@ namespace EthoriaMod.Content.UI.SkTree
             }
         }
 
-       
-        
 
-        public SkillTree(int nodeDist = 100)
+        public void updateSkillEffects()
         {
-            this.nodeDist = nodeDist;
-            root = new SkillTreeNode(0.5f, 0.5f, "Start", GrowDirection.None, true);
-            nodeList = new List<SkillTreeNode>();
-            nodeList.Add(root);
-
-            root.addChild("Warrior", GrowDirection.Left, nodeList);
-            root.addChild("Ranger", GrowDirection.Right, nodeList);
-            root.addChild("Mage", GrowDirection.Up, nodeList);
-            SkillTreeNode summoner = root.addChild("Summoner", GrowDirection.Down, nodeList);
-            summoner.addChild("Fireball", nodeList);
-            summoner.addChild("BigBalls", nodeList);
-
-
-            updateChildrenPositions();
+            for (int i = 0; i < nodeList.Count; i++)
+            {
+                if (nodeList[i].unlocked)
+                {
+                    Main.LocalPlayer.GetDamage(DamageClass.Ranged) += 100f;
+                }
+            }
         }
 
         public TagCompound SerializeData()
@@ -289,7 +307,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
                 for (int i = 0; i < l.Count; i++)
                 {
-                    l[i].unlocked = savedNodes[i].unlocked;
+                    l[i].unlock(savedNodes[i].unlocked);
                 }
             }
             return ret;

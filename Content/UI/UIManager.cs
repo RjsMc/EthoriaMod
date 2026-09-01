@@ -20,11 +20,20 @@ namespace EthoriaMod.Content.UI
         {
             if (!Main.dedServ)
             {
-                layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { StaminaBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
 
-                layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { ExpBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+                int mouseTextIndex = layers.FindIndex(
+                    layer => layer.Name.Equals("Vanilla: Mouse Text")
+                );
 
-                layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { SkillTreeUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+                if (mouseTextIndex != -1)
+                {
+                    layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("Stamina Bar", delegate () { StaminaBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+
+                    layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("Exp Bar", delegate () { ExpBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+
+                    layers.Insert(mouseTextIndex, new LegacyGameInterfaceLayer("Skill Tree", delegate () { SkillTreeUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+                }
+                
             }
         }
     }

@@ -16,9 +16,6 @@
 	<ItemGroup>
 	  <AdditionalFiles Remove="Localization\en-US\en-US_Mods.EthoriaMod.TestDialogue.hjson" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Compile Include="Localization\en-US\en-US_Mods.EthoriaMod.TestDialogue.hjson" />
-	</ItemGroup>
 
 	<!-- References -->
 	<ItemGroup>

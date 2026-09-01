@@ -58,10 +58,12 @@ namespace EthoriaMod.Content.EthPlayer
             customInputs = new CustomInputs(Player);
             this.syphonAllExp();
         }
-        
+        public override void PostUpdateEquips()
+        {
+            skillTree.updateSkillEffects();
+        }
         public override void PreUpdate()
         {
-
             if (!sprinting)
             {
                 stamina++;
