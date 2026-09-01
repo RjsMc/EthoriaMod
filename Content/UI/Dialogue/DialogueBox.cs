@@ -1,14 +1,15 @@
-﻿using JetBrains.Annotations;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
+using Terraria;
 using Terraria.GameContent;
 using Terraria.UI;
-using Terraria;
 
 namespace EthoriaMod.Content.UI.Dialogue
 {
@@ -17,6 +18,11 @@ namespace EthoriaMod.Content.UI.Dialogue
         private string speaker = "Jonathan";
         private string text = "OOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGA";
 
+        private int maxTypewriterTimer = 5;
+        private int typewriterTimer = 0;
+        private int currChar = 0;
+
+        private int margin = 20;
         public DialogueBox()
         {
             Width.Set(800, 0);
@@ -49,24 +55,55 @@ namespace EthoriaMod.Content.UI.Dialogue
                 spriteBatch,
                 speaker,
                 new Vector2(
-                    dimensions.X + 20f,
-                    dimensions.Y + 15f
+                    dimensions.X + margin,
+                    dimensions.Y + margin
                 ),
                 Color.White
             );
+            DynamicSpriteFont font = FontAssets.MouseText.Value;
+            Vector2 speakerSize = font.MeasureString(speaker);
+            
+
+            String subText = text.Substring(0, currChar);
+            String drawText = "";
+
+            String[] words = drawText.Split(' ');
+            for (int i = 0; i < currChar; i++)
+            {
+                drawText += subText[i];
+
+                Vector2 textSize = font.MeasureString(drawText);
+                if (textSize.X >= dimensions.Width - 2 * margin)
+                {
+                    drawText = drawText.Insert(drawText.Length - 1, "\n");
+                }
+            }
+
 
             // DialogueText
             Utils.DrawBorderString(
                 spriteBatch,
-                text,
+                drawText,
                 new Vector2(
-                    dimensions.X + 20f,
-                    dimensions.Y + 55f
+                    dimensions.X + margin,
+                    dimensions.Y + margin + speakerSize.Y
                 ),
                 Color.White
             );
+            
+            if (typewriterTimer > 0)
+            {
+                typewriterTimer--;
+            } else
+            {
+                if (currChar < text.Length)
+                {
+                    currChar++;
+                    typewriterTimer = maxTypewriterTimer;
+                }
 
-            base.DrawSelf( spriteBatch );
+            }
+                base.DrawSelf(spriteBatch);
         }
     }
 }
