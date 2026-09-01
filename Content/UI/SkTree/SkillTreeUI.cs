@@ -78,9 +78,8 @@ namespace EthoriaMod.Content.UI.SkTree
                 null,
                 Main.GameViewMatrix.EffectMatrix);
 
-            Utils.DrawBorderString(spriteBatch, "Test", new Vector2(Main.screenWidth / 2.0f, Main.screenHeight / 2.0f) + displacement, Color.White);
             Vector2 cutoutPos = new Vector2(midX - skillTreeWindowScreenW / 2, midY - skillTreeWindowScreenH / 2);
-             Vector2 windowPosition = new Vector2(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2);
+            Vector2 windowPosition = new Vector2(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2);
             skillTree.drawSkillTree(spriteBatch, displacement, cutoutPos, windowPosition, backgroundRect);
          
             spriteBatch.End();
@@ -96,8 +95,6 @@ namespace EthoriaMod.Content.UI.SkTree
                 null,
                 Main.GameViewMatrix.EffectMatrix);
 
-            
-         
             spriteBatch.Draw(TextureAssets.MagicPixel.Value, backgroundRect, Color.White);
 
             spriteBatch.Draw(

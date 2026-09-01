@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using EthoriaMod.Common.Helpers;
 using Humanizer.DateTimeHumanizeStrategy;
+using log4net.Core;
 using log4net.DateFormatter;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Xna.Framework;
@@ -22,7 +24,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
     
     
-    public class SkillTree
+    public class SkillTree : TagSerializable
     {
         public enum GrowDirection
         {
@@ -33,15 +35,16 @@ namespace EthoriaMod.Content.UI.SkTree
             Down,
             enumSize
         }
+        public List<SkillTreeNode> nodeList;
         public SkillTreeNode root;
         public int nodeDist;
         public static int defaultSize = 10;
-        public class SkillTreeNode
+        public class SkillTreeNode : TagSerializable 
         {
             
 
-            public List<List<SkillTreeNode>> Children;
-            public List<SkillTreeNode> Parents;
+            public List<List<SkillTreeNode>> children;
+            public List<SkillTreeNode> parents;
             public Vector2 drawPos;
             public string skillName;
             public bool unlocked;
@@ -51,11 +54,11 @@ namespace EthoriaMod.Content.UI.SkTree
 
             public SkillTreeNode(float drawX, float drawY, string skillName, GrowDirection growDirection = GrowDirection.None, bool unlocked = false)
             {
-                Parents = new List<SkillTreeNode>();
-                Children = new List<List<SkillTreeNode>>();
+                parents = new List<SkillTreeNode>();
+                children = new List<List<SkillTreeNode>>();
                 for (int i = 0; i < (int)GrowDirection.enumSize; i++)
                 {
-                    Children.Add(new List<SkillTreeNode>());
+                    children.Add(new List<SkillTreeNode>());
                 }
                
                 this.drawPos = new Vector2(drawX, drawY);
@@ -69,11 +72,11 @@ namespace EthoriaMod.Content.UI.SkTree
 
             public SkillTreeNode(string skillName, GrowDirection growDirection = GrowDirection.None, bool unlocked = false)
             {
-                Parents = new List<SkillTreeNode>();
-                Children = new List<List<SkillTreeNode>>();
+                parents = new List<SkillTreeNode>();
+                children = new List<List<SkillTreeNode>>();
                 for (int i = 0; i < (int) GrowDirection.enumSize; i++)
                 {
-                    Children.Add(new List<SkillTreeNode>());
+                    children.Add(new List<SkillTreeNode>());
                 }
 
                 this.drawPos = new Vector2(0, 0);
@@ -84,18 +87,20 @@ namespace EthoriaMod.Content.UI.SkTree
                 h = defaultSize;
             }
 
-            public SkillTreeNode addChild(string skillName)
+            public SkillTreeNode addChild(string skillName, List<SkillTreeNode> nodeList)
             {
-                return addChild(skillName, growDirection);
+                return addChild(skillName, growDirection, nodeList);
             }
 
-            public SkillTreeNode addChild(string skillName, GrowDirection direction)
+            public SkillTreeNode addChild(string skillName, GrowDirection direction, List<SkillTreeNode> nodeList)
             {
                 
                 SkillTreeNode child = new SkillTreeNode(skillName, direction);
 
-                Children[(int) direction].Add(child);
-                child.Parents.Add(this);
+                children[(int) direction].Add(child);
+                child.parents.Add(this);
+
+                nodeList.Add(child);
                 return child;
             }
 
@@ -104,6 +109,23 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 unlocked = true;
             }
+
+            public TagCompound SerializeData()
+            {
+                return new TagCompound
+                {
+                    {"unlocked", unlocked}
+                };
+            }
+
+            public static SkillTreeNode Load(TagCompound tag)
+            {
+                SkillTreeNode ret = new SkillTreeNode("");
+                ret.unlocked = tag.GetBool("unlocked");
+                return ret;
+            }
+
+            public static Func<TagCompound, SkillTreeNode> DESERIALIZER = Load;
         }
 
         public void drawSkillTree(SpriteBatch spriteBatch, Vector2 displacement, Vector2 cutoutPosition, Vector2 windowPosition, Rectangle backgroundRect)
@@ -144,7 +166,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
               
                 for (int i = 0; i < (int) GrowDirection.enumSize; i++) { 
-                    List<SkillTreeNode> children = curr.Children[i];
+                    List<SkillTreeNode> children = curr.children[i];
 
 
                     foreach (SkillTreeNode child in children)
@@ -175,7 +197,7 @@ namespace EthoriaMod.Content.UI.SkTree
                 for (int i = 0; i < (int)GrowDirection.enumSize; i++)
                 {
                     float floatDist = (float) nodeDist;
-                    List<SkillTreeNode> directionalChildren = curr.Children[i];
+                    List<SkillTreeNode> directionalChildren = curr.children[i];
                     Vector2 delta = new Vector2(curr.drawPos.X, curr.drawPos.Y);
                     Vector2 childDirection = new Vector2(0, 0);
                     
@@ -226,26 +248,50 @@ namespace EthoriaMod.Content.UI.SkTree
                 }
             }
         }
-            
+
+       
+        
 
         public SkillTree(int nodeDist = 100)
         {
             this.nodeDist = nodeDist;
             root = new SkillTreeNode(0.5f, 0.5f, "Start", GrowDirection.None, true);
-      
-            root.addChild("Warrior", GrowDirection.Left);
-            root.addChild("Ranger", GrowDirection.Right);
-            root.addChild("Mage", GrowDirection.Up);
-            SkillTreeNode summoner = root.addChild("Summoner", GrowDirection.Down);
-            summoner.addChild("Fireball");
-            summoner.addChild("BigBalls");
+            nodeList = new List<SkillTreeNode>();
+            nodeList.Add(root);
+
+            root.addChild("Warrior", GrowDirection.Left, nodeList);
+            root.addChild("Ranger", GrowDirection.Right, nodeList);
+            root.addChild("Mage", GrowDirection.Up, nodeList);
+            SkillTreeNode summoner = root.addChild("Summoner", GrowDirection.Down, nodeList);
+            summoner.addChild("Fireball", nodeList);
+            summoner.addChild("BigBalls", nodeList);
 
 
             updateChildrenPositions();
         }
-        
 
-        
+        public TagCompound SerializeData()
+        {
+            return new TagCompound
+            {
+                {"nodeList", nodeList}
+            };
+        }
+
+        public static SkillTree Load(TagCompound tag)
+        {
+            List<SkillTreeNode> savedNodes = (List<SkillTreeNode>)tag.GetList<SkillTreeNode>("nodeList");
+            SkillTree ret = new SkillTree();
+            List<SkillTreeNode> l = ret.nodeList;
+
+            for (int i = 0; i < l.Count; i++)
+            {
+                l[i].unlocked = savedNodes[i].unlocked;   
+            }
+            return ret;
+        }
+
+        public static Func<TagCompound, SkillTree> DESERIALIZER = Load;
 
     }
 }

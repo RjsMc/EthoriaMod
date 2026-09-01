@@ -9,22 +9,23 @@ using Terraria.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using EthoriaMod.Content.UI.SkTree;
+using Microsoft.VisualStudio.Setup.Configuration;
 
 namespace EthoriaMod.Content.UI
 {
     public class UIManager : ModSystem
     {
-
+        
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
-           
-            
-            layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate() { StaminaBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+            if (!Main.dedServ)
+            {
+                layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { StaminaBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
 
-            layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { ExpBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+                layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { ExpBarUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
 
-            layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { SkillTreeUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
-
+                layers.Insert(0, new LegacyGameInterfaceLayer("Test", delegate () { SkillTreeUI.Draw(Main.spriteBatch, Main.LocalPlayer); return true; }, InterfaceScaleType.None));
+            }
         }
     }
 }
