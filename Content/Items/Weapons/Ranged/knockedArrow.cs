@@ -57,13 +57,11 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
  
         public override bool PreDraw(ref Color lightColor)
         {
-            Vector2 worldPixelPos = tipPosition; // Example position
+            Vector2 worldPixelPos = tipPosition;  
 
-            // 2. Convert pixel position to tile coordinates
             int tileX = (int)(worldPixelPos.X / 16f);
             int tileY = (int)(worldPixelPos.Y / 16f);
 
-            // 3. Get the lighting color at that tile
             Color color = Lighting.GetColor(tileX, tileY);
             
             Owner.heldProj = Projectile.whoAmI;
