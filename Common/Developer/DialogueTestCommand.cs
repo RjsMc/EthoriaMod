@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 
 namespace EthoriaMod.Common.Developer
 {
-    internal class DialogueTestCommand : ModCommand
+    internal class DialogueTestCommand : ModCommand // Command to test starting node of dialogue
     {
         public override CommandType Type => CommandType.Chat;
         public override string Command => "dialoguetest";
