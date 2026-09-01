@@ -91,7 +91,6 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             
             if (!Main.mouseLeft || (Owner.itemAnimation <= 1 && autoReuse))
             {
-
                 Projectile.aiStyle = ProjAIStyleID.Arrow;
 
                 

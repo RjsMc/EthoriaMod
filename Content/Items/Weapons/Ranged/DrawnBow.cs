@@ -28,11 +28,6 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 item.shoot = ModContent.ProjectileType<KnockedArrow>();
                 item.UseSound = null;
             }
-           
-
-            
-
-            
         }
 
      
