@@ -177,17 +177,40 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 switch (skillID)
                 {
+
+
+                    case SkillID.Start:
+                        return "Once upon a time...";
+
+
+
+                    case SkillID.Warrior:
+                        return "Path of the Warrior";
+
+
+
+
                     case SkillID.Ranger:
-                        return "Increase ranged damage by 25%";
-                   
+                        return "Path of the Ranger\nIncrease ranged damage by 25%";
 
                     case SkillID.Quickdraw:
                         return "Increase bow draw speed by 25%";
 
-                    case SkillID.Start:
-                        return "Once upon a time...";
-                
-                    
+
+
+                    case SkillID.Mage:
+                        return "Path of the Mage";
+
+
+
+                    case SkillID.Summoner:
+                        return "Path of the Summoner";
+
+
+
+
+
+
                 }
                 return "";
             }
