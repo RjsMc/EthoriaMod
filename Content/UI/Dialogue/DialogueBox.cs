@@ -9,7 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ModLoader;
 using Terraria.UI;
+using ReLogic.Content;
 
 namespace EthoriaMod.Content.UI.Dialogue
 {
@@ -21,17 +23,20 @@ namespace EthoriaMod.Content.UI.Dialogue
         private int maxTypewriterTimer = 5;
         private int typewriterTimer = 0;
         private int currChar = 0;
+        private int margin = 0;
 
-        private int margin = 20;
+        private Asset<Texture2D> dialogueBoxTexture;
         public DialogueBox()
         {
-            Width.Set(800, 0);
-            Height.Set(180, 0);
+            Width.Set(715, 0);
+            Height.Set(208, 0);
 
             HAlign = 0.5f;
             VAlign = 1f;
 
-            Top.Set(-125, 0);
+            Top.Set(-175, 0);
+
+            dialogueBoxTexture = ModContent.Request<Texture2D>("EthoriaMod/Assets/UI/Dialogue/DialogueBox");
         }
 
         public void SetDialogue(string speaker, string text)
@@ -45,9 +50,9 @@ namespace EthoriaMod.Content.UI.Dialogue
             CalculatedStyle dimensions = GetDimensions();
 
             spriteBatch.Draw(
-                TextureAssets.MagicPixel.Value,
+                dialogueBoxTexture.Value,
                 dimensions.ToRectangle(),
-                Color.Azure * 0.55f
+                Color.White
             );
 
             // Speaker
@@ -55,7 +60,7 @@ namespace EthoriaMod.Content.UI.Dialogue
                 spriteBatch,
                 speaker,
                 new Vector2(
-                    dimensions.X + margin,
+                    dimensions.X + 80,
                     dimensions.Y + margin
                 ),
                 Color.White

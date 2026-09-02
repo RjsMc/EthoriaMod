@@ -1,5 +1,6 @@
 ﻿using EthoriaMod.Content.Dialogue;
 using EthoriaMod.Content.Dialogue.NPCDialogueHandlers;
+using EthoriaMod.Content.UI.Dialogue;
 using System;
 using Terraria;
 using Terraria.ModLoader;
@@ -9,14 +10,16 @@ namespace EthoriaMod.Common.Developer
     internal class DialogueTestCommand : ModCommand
     {
         public override CommandType Type => CommandType.Chat;
-        public override string Command => "dialoguetest";
+        public override string Command => "dt";
         public override string Description => "Test the dialogue system";
-        public override string Usage => "/dialoguetest";
+        public override string Usage => "/dt";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
             // Load the dialogue
             TestNPCDialogue.Load();
+
+            ModContent.GetInstance<DialogueUISystem>().ShowDialogue();
 
             Dialogue dialogue = TestNPCDialogue.Dialogue;
 
