@@ -1,48 +1,84 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
-using Terraria.GameContent;
+using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace EthoriaMod.Content.UI.Dialogue
 {
-    internal class DialogueButton : UIElement
+    public class DialoguePromptButton : UIElement
     {
+        private Asset<Texture2D> promptTexture;
+        private Asset<Texture2D> promptHoverTexture;
+        private bool hovered;
+
+        private float scale = 0.75f;
+
         private string text;
-        public DialogueButton(string text)
+
+        public int PromptIndex { get; }
+
+        public float PromptWidth => promptTexture.Value.Width * scale;
+        public float PromptHeight => promptTexture.Value.Height * scale;
+
+        public DialoguePromptButton(int promptIndex, string text)
         {
+            PromptIndex = promptIndex;
             this.text = text;
 
-            Width.Set(300, 0);
-            Height.Set(50, 0);
+            promptTexture = ModContent.Request<Texture2D>(
+                "EthoriaMod/Assets/UI/Dialogue/DialoguePromptUnhover"
+            );
+
+            promptHoverTexture = ModContent.Request<Texture2D>(
+                "EthoriaMod/Assets/UI/Dialogue/DialoguePromptHover"
+            );
+
+            Width.Set(
+                promptTexture.Value.Width * scale,
+                0
+            );
+
+            Height.Set(
+                promptTexture.Value.Height * scale,
+                0
+            );
+
+            OnMouseOver += (_, _) =>
+            {
+                hovered = true;
+                Main.NewText($"Mouse Out Prompt {PromptIndex}");
+            };
+            
+            OnMouseOut += (_, _) =>
+            {
+                hovered = false;
+                Main.NewText($"Mouse Out Prompt {PromptIndex}");
+            };
+            
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
+            Width.Set(
+                promptTexture.Value.Width * scale,
+                0
+            );
+
+            Height.Set(
+                promptTexture.Value.Height * scale,
+                0
+            );
+
             CalculatedStyle dimensions = GetDimensions();
+            Texture2D texture = hovered ? promptHoverTexture.Value : promptTexture.Value; 
 
             spriteBatch.Draw(
-                TextureAssets.MagicPixel.Value,
+                texture,
                 dimensions.ToRectangle(),
-                Color.DarkGray
-            );
-
-            Utils.DrawBorderString(
-                spriteBatch,
-                text,
-                new Vector2(
-                    dimensions.X + 15f,
-                    dimensions.Y + 12f
-                ),
                 Color.White
             );
-
-            base.DrawSelf( spriteBatch );
         }
     }
 }

@@ -16,6 +16,10 @@ namespace EthoriaMod.Content.UI.Dialogue
         internal UserInterface DialogueInterface;
         internal DialogueUI DialogueUI;
 
+        public override void OnWorldUnload()
+        {
+            HideDialogue();
+        }
         public override void Load()
         {
             if (!Main.dedServ)
@@ -64,6 +68,7 @@ namespace EthoriaMod.Content.UI.Dialogue
 
         public void HideDialogue()
         {
+            DialogueUI?.ClearSession();
             DialogueInterface?.SetState(null);
         }
     }
