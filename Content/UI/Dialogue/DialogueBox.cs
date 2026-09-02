@@ -14,6 +14,7 @@ using Terraria.UI;
 using ReLogic.Content;
 using EthoriaMod.Content.Dialogue;
 
+#nullable enable
 namespace EthoriaMod.Content.UI.Dialogue
 {
     public class DialogueBox : UIElement
@@ -29,14 +30,26 @@ namespace EthoriaMod.Content.UI.Dialogue
         private int nametagOffset = 7;
 
         private float scale = 0.75f;
+        public float BoxWidth => dialogueBoxTexture.Value.Width * scale;
+        public float BoxHeight => dialogueBoxTexture.Value.Height * scale;
         private DialogueSession? session;
-
+        
         protected Asset<Texture2D> dialogueBoxTexture;
         protected Asset<Texture2D> dialogueNameTexture;
 
-        public void SetSession(DialogueSession session)
+        public void SetSession(DialogueSession? session)
         {
             this.session = session;
+
+            if (session == null)
+            {
+                speaker = "";
+                text = "";
+                currChar = 0;
+                typewriterTimer = 0;
+                return;
+            }
+
             speaker = session.CurrentNode.Speaker ?? "%null%";
             text = session.CurrentNode.Text ?? "%null%";
             currChar = 0;
@@ -55,7 +68,7 @@ namespace EthoriaMod.Content.UI.Dialogue
             HAlign = 0.5f;
             VAlign = 1f;
 
-            Top.Set(-175, 0);
+            Top.Set(-130, 0);
         }
 
         public void SetDialogue(string speaker, string text)
@@ -147,7 +160,7 @@ namespace EthoriaMod.Content.UI.Dialogue
                 }
 
             }
-                base.DrawSelf(spriteBatch);
+            base.DrawSelf(spriteBatch);
         }
     }
 }

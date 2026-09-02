@@ -25,8 +25,7 @@ namespace EthoriaMod.Common.Developer
             DialogueSession session = new(dialogue);
 
             // Show the dialogue UI using this session
-            ModContent.GetInstance<DialogueUISystem>()
-                .ShowDialogue(session);
+            ModContent.GetInstance<DialogueUISystem>().ShowDialogue(session);
 
             caller.Reply("=== Dialogue Test ===");
 
