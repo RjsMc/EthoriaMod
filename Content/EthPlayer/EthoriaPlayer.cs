@@ -23,6 +23,8 @@ namespace EthoriaMod.Content.EthPlayer
         public int currentExp = 0;
         public int expToSyphon = 0;
 
+        public int numArrows = 1;
+
         public float stamina = 0.0f;
         public float maxStamina = 300.0f;
         private float minStaminaToRun = 10.0f;
@@ -36,7 +38,7 @@ namespace EthoriaMod.Content.EthPlayer
         private int rTap = 0;
 
         private int doubleTapWindow = 15;
-
+        
 
         public SkillTree skillTree = new SkillTree();
 
@@ -75,6 +77,10 @@ namespace EthoriaMod.Content.EthPlayer
             syphonExp();
         }
 
+        public override void ResetEffects()
+        {
+            numArrows = 1;
+        }
         public override void PostUpdate()
         {
             lTap--;

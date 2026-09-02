@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         public int minChargingFrames = 0;
         public bool autoReuse = false;
         public int itemID = 0;
+        public int numArrows = 1;
         public override string Texture => "EthoriaMod/Content/Items/Weapons/Ranged/KnockedArrow";
         private float interpSpd = 0.5f;
 
@@ -58,6 +60,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
  
         public override bool PreDraw(ref Color lightColor)
         {
+
             Vector2 worldPixelPos = tipPosition;  
 
             int tileX = (int)(worldPixelPos.X / 16f);
@@ -67,9 +70,18 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             
             Owner.heldProj = Projectile.whoAmI;
             Texture2D newTexture = TextureAssets.Projectile[actualType].Value;
-            
 
-            Main.EntitySpriteDraw(newTexture, tipPosition - Main.screenPosition, null, color, Projectile.rotation + float.Pi, new Vector2(newTexture.Width * 0.5f , 0), 1f, 0, 0);
+            float rot = Projectile.rotation + float.Pi;
+
+            Vector2 perp = new Vector2((float)Math.Cos(rot), (float)Math.Sin(rot));
+            Main.NewText(perp);
+            Vector2 drawPos = tipPosition;
+            for (int i = 0; i < numArrows; i++)
+            {
+
+                Main.EntitySpriteDraw(newTexture, drawPos - Main.screenPosition, null, color, rot, new Vector2(newTexture.Width * 0.5f, 0), 1f, 0, 0);
+                drawPos += perp * 15;
+            }
 
             
             return false;

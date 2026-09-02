@@ -23,20 +23,26 @@ namespace EthoriaMod.Content.UI.Dialogue
         private int maxTypewriterTimer = 5;
         private int typewriterTimer = 0;
         private int currChar = 0;
-        private int margin = 0;
+        private int borderThickness = 30;
+        private int margin = 10;
 
-        private Asset<Texture2D> dialogueBoxTexture;
+
+        protected Asset<Texture2D> dialogueBoxTexture;
+        protected Asset<Texture2D> dialogueNameTexture;
         public DialogueBox()
         {
-            Width.Set(715, 0);
-            Height.Set(208, 0);
+
+            dialogueBoxTexture = ModContent.Request<Texture2D>("EthoriaMod/Assets/UI/Dialogue/DialogueBox");
+            dialogueNameTexture = ModContent.Request<Texture2D>("EthoriaMod/Assets/UI/Dialogue/DialogueName");
+
+
+            Width.Set(dialogueBoxTexture.Value.Width, 0);
+            Height.Set(dialogueBoxTexture.Value.Height, 0);
 
             HAlign = 0.5f;
             VAlign = 1f;
 
             Top.Set(-175, 0);
-
-            dialogueBoxTexture = ModContent.Request<Texture2D>("EthoriaMod/Assets/UI/Dialogue/DialogueBox");
         }
 
         public void SetDialogue(string speaker, string text)
@@ -47,6 +53,11 @@ namespace EthoriaMod.Content.UI.Dialogue
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
+
+            Width.Set(dialogueBoxTexture.Value.Width, 0);
+            Height.Set(dialogueBoxTexture.Value.Height, 0);
+
+
             CalculatedStyle dimensions = GetDimensions();
 
             spriteBatch.Draw(
@@ -55,18 +66,29 @@ namespace EthoriaMod.Content.UI.Dialogue
                 Color.White
             );
 
+            Vector2 dialogueNameSize = dialogueNameTexture.Value.Size();
+            Rectangle dialogueNameRectangle = new Rectangle((int) dimensions.X + borderThickness, (int) dimensions.Y - borderThickness, (int) dialogueNameSize.X, (int) dialogueNameSize.Y);
+            spriteBatch.Draw(
+                dialogueNameTexture.Value,
+                dialogueNameRectangle,
+                Color.White
+            );
+
+
+
+            DynamicSpriteFont font = FontAssets.MouseText.Value;
+            Vector2 speakerSize = font.MeasureString(speaker);
+
             // Speaker
             Utils.DrawBorderString(
                 spriteBatch,
                 speaker,
                 new Vector2(
-                    dimensions.X + 80,
-                    dimensions.Y + margin
+                    dialogueNameRectangle.X + ((dialogueNameRectangle.Width - speakerSize.X) / 2),
+                    dialogueNameRectangle.Y + ((dialogueNameRectangle.Height - speakerSize.Y/2) / 2)
                 ),
                 Color.White
             );
-            DynamicSpriteFont font = FontAssets.MouseText.Value;
-            Vector2 speakerSize = font.MeasureString(speaker);
             
 
             String subText = text.Substring(0, currChar);
@@ -78,7 +100,7 @@ namespace EthoriaMod.Content.UI.Dialogue
                 drawText += subText[i];
 
                 Vector2 textSize = font.MeasureString(drawText);
-                if (textSize.X >= dimensions.Width - 2 * margin)
+                if (textSize.X >= dimensions.Width - 2 * (margin + borderThickness))
                 {
                     drawText = drawText.Insert(drawText.Length - 1, "\n");
                 }
@@ -90,8 +112,8 @@ namespace EthoriaMod.Content.UI.Dialogue
                 spriteBatch,
                 drawText,
                 new Vector2(
-                    dimensions.X + margin,
-                    dimensions.Y + margin + speakerSize.Y
+                    dimensions.X + margin + borderThickness,
+                    dimensions.Y + margin + borderThickness 
                 ),
                 Color.White
             );

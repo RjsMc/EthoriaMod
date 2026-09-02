@@ -196,7 +196,9 @@ namespace EthoriaMod.Content.UI.SkTree
                     case SkillID.Quickdraw:
                         return "Increase bow draw speed by 25%";
 
-
+                    case SkillID.DoubleShot:
+                        return "Bows shoot an extra arrow";
+                       
 
                     case SkillID.Mage:
                         return "Path of the Mage";
@@ -371,6 +373,8 @@ namespace EthoriaMod.Content.UI.SkTree
 
         public void updateSkillEffects()
         {
+            Player player = Main.LocalPlayer;
+            EthoriaPlayer ethPlayer = player.GetModPlayer<EthoriaPlayer>();
             for (int i = 0; i < nodeList.Count; i++)
             {
                 if (nodeList[i].unlocked)
@@ -378,15 +382,19 @@ namespace EthoriaMod.Content.UI.SkTree
                     switch (nodeList[i].skillID)
                     {
                         case SkillID.Ranger:
-                            Main.LocalPlayer.GetDamage(DamageClass.Ranged) += 0.25f; 
+                            player.GetDamage(DamageClass.Ranged) += 0.25f; 
                             break;
 
                         case SkillID.Quickdraw:
-                            Main.LocalPlayer.GetAttackSpeed(DamageClass.Ranged) += 0.25f;
+                            player.GetAttackSpeed(DamageClass.Ranged) += 0.25f;
                             break;
 
                         case SkillID.HeavyString:
-                            Main.LocalPlayer.GetModPlayer<EthoriaPlayer>();
+                            player.GetModPlayer<EthoriaPlayer>();
+                            break;
+
+                        case SkillID.DoubleShot:
+                            ethPlayer.numArrows++;
                             break;
 
 

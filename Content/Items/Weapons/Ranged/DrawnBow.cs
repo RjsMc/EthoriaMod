@@ -6,6 +6,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using EthoriaMod.Content.EthPlayer;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
@@ -49,6 +50,9 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         {
             if (!exclude.Contains(item.type) && item.useAmmo == AmmoID.Arrow && item.shoot > ProjectileID.None)
             {
+
+                EthoriaPlayer ethPlayer = player.GetModPlayer<EthoriaPlayer>();
+                
                 int consumedAmmoId = source.AmmoItemIdUsed;
                 int firedProj = Projectile.NewProjectile(source, position, velocity, item.shoot, damage, knockback, player.whoAmI);
                 KnockedArrow theArrow = (KnockedArrow)(Main.projectile[firedProj].ModProjectile);
@@ -61,7 +65,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 theArrow.itemID = consumedAmmoId;
                 theArrow.actualType = type;
                 theArrow.minChargingFrames = int.Min(item.useAnimation, 10);
-
+                theArrow.numArrows = ethPlayer.numArrows;
 
                 return false;
             }
