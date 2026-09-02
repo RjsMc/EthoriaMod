@@ -19,14 +19,16 @@ namespace EthoriaMod.Common.Developer
             // Load the dialogue
             TestNPCDialogue.Load();
 
-            ModContent.GetInstance<DialogueUISystem>().ShowDialogue();
-
             Dialogue dialogue = TestNPCDialogue.Dialogue;
-
-            caller.Reply("=== Dialogue Test ===");
 
             // Create a session
             DialogueSession session = new(dialogue);
+
+            // Show the dialogue UI using this session
+            ModContent.GetInstance<DialogueUISystem>()
+                .ShowDialogue(session);
+
+            caller.Reply("=== Dialogue Test ===");
 
             // Show starting node
             PrintCurrentNode(caller, session);
@@ -85,4 +87,3 @@ namespace EthoriaMod.Common.Developer
         }
     }
 }
-

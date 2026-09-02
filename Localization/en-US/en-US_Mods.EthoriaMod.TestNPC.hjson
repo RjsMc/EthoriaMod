@@ -3,7 +3,7 @@ StartNode: Hello
 Nodes: {
 	Hello: {
 		Speaker: Test
-		Text: YOOOOOO HOW IT GOIIIIING WHAT'S GOOOOOOOOOOOD?!?!?!?!?!
+		Text: If you are reading this that means the dialogue system is linked to the localizer now!
 
 		Prompts: {
 			0: {

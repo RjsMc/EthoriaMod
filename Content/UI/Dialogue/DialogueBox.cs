@@ -12,24 +12,36 @@ using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.UI;
 using ReLogic.Content;
+using EthoriaMod.Content.Dialogue;
 
 namespace EthoriaMod.Content.UI.Dialogue
 {
     public class DialogueBox : UIElement
     {
-        private string speaker = "Jonathan";
-        private string text = "OOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGAOOGABOOGA";
+        private string speaker = "";
+        private string text = "";
 
         private int maxTypewriterTimer = 5;
         private int typewriterTimer = 0;
         private int currChar = 0;
         private int borderThickness = 30;
         private int margin = 10;
+        private int nametagOffset = 7;
 
         private float scale = 0.75f;
+        private DialogueSession? session;
 
         protected Asset<Texture2D> dialogueBoxTexture;
         protected Asset<Texture2D> dialogueNameTexture;
+
+        public void SetSession(DialogueSession session)
+        {
+            this.session = session;
+            speaker = session.CurrentNode.Speaker ?? "%null%";
+            text = session.CurrentNode.Text ?? "%null%";
+            currChar = 0;
+            typewriterTimer = 0;
+        }
         public DialogueBox()
         {
 
@@ -50,6 +62,8 @@ namespace EthoriaMod.Content.UI.Dialogue
         {
             this.speaker = speaker;
             this.text = text;
+            currChar = 0;
+            typewriterTimer = 0;
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
@@ -72,14 +86,12 @@ namespace EthoriaMod.Content.UI.Dialogue
 
             Vector2 dialogueNameSize = dialogueNameTexture.Value.Size();
             Vector2 dialogueNamePos = new Vector2(dimensions.X + scaledBorderThickness, dimensions.Y - scaledBorderThickness);
-            Rectangle dialogueNameRectangle = new Rectangle((int) dialogueNamePos.X, (int) dialogueNamePos.Y, (int) ((float) dialogueNameSize.X * scale), (int) ((float) dialogueNameSize.Y * scale));
+            Rectangle dialogueNameRectangle = new Rectangle((int) dialogueNamePos.X + nametagOffset, (int) dialogueNamePos.Y + nametagOffset, (int) ((float) dialogueNameSize.X * scale), (int) ((float) dialogueNameSize.Y * scale));
             spriteBatch.Draw(
                 dialogueNameTexture.Value,
                 dialogueNameRectangle,
                 Color.White
             );
-
-
 
             DynamicSpriteFont font = FontAssets.MouseText.Value;
             Vector2 speakerSize = font.MeasureString(speaker);
@@ -118,7 +130,7 @@ namespace EthoriaMod.Content.UI.Dialogue
                 drawText,
                 new Vector2(
                     dimensions.X + scaledMargin + scaledBorderThickness,
-                    dimensions.Y + scaledMargin + scaledBorderThickness
+                    dimensions.Y + scaledMargin + scaledBorderThickness + nametagOffset
                 ),
                 Color.White
             );

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EthoriaMod.Content.Dialogue;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,8 +56,9 @@ namespace EthoriaMod.Content.UI.Dialogue
             }
         }
 
-        public void ShowDialogue()
+        public void ShowDialogue(DialogueSession session)
         {
+            DialogueUI.SetSession( session );
             DialogueInterface?.SetState(DialogueUI);
         }
 

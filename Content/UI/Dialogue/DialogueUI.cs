@@ -10,6 +10,7 @@ using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader;
 using Terraria.UI;
+using EthoriaMod.Content.Dialogue;
 
 namespace EthoriaMod.Content.UI.Dialogue
 {
@@ -20,6 +21,11 @@ namespace EthoriaMod.Content.UI.Dialogue
         {
             DialogueBox = new DialogueBox();
             Append(DialogueBox);
+        }
+
+        public void SetSession(DialogueSession session)
+        {
+            DialogueBox.SetSession(session);
         }
 
         //private GameTime _lastUpdateUiGameTime;
