@@ -41,10 +41,15 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         public bool autoReuse = false;
         public int itemID = 0;
         public int numArrows = 1;
+        public float arrowSpread = float.Pi/8;
         public override string Texture => "EthoriaMod/Content/Items/Weapons/Ranged/KnockedArrow";
         private float interpSpd = 0.5f;
 
-        private Vector2 shootDirection = new Vector2(0, 0), armPosition = new Vector2(0, 0), tipPosition = new Vector2(0, 0);
+        public int arrowDist = 5;
+
+        public int hiddenFrames = 0;
+
+        private Vector2 shootDirection = new Vector2(0, 0), armPosition = new Vector2(0, 0), tipPosition = new Vector2(0, 0), featherPosition = new Vector2(0, 0);
         public override void SetDefaults()
         {
             Projectile.width = 7;
@@ -54,33 +59,51 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             Projectile.tileCollide = false;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.ignoreWater = true;
+            
             DrawHeldProjInFrontOfHeldItemAndArms = false;
+     
 
         }
- 
+
         public override bool PreDraw(ref Color lightColor)
         {
+            if (hiddenFrames > 0)
+            {
 
-            Vector2 worldPixelPos = tipPosition;  
+                hiddenFrames--;
+                return false;
+            }
+
+            Vector2 worldPixelPos = featherPosition;
 
             int tileX = (int)(worldPixelPos.X / 16f);
             int tileY = (int)(worldPixelPos.Y / 16f);
 
             Color color = Lighting.GetColor(tileX, tileY);
-            
+
             Owner.heldProj = Projectile.whoAmI;
             Texture2D newTexture = TextureAssets.Projectile[actualType].Value;
 
             float rot = Projectile.rotation + float.Pi;
 
             Vector2 perp = new Vector2((float)Math.Cos(rot), (float)Math.Sin(rot));
-            Main.NewText(perp);
-            Vector2 drawPos = tipPosition;
+
+
+
+            int fullDist = (numArrows - 1) * arrowDist;
+            Vector2 drawPos = featherPosition;
+            float rotStep = 0;
+            if (numArrows > 1) {
+
+                rotStep = arrowSpread / (numArrows - 1);
+                rot -= arrowSpread / 2;
+            }
             for (int i = 0; i < numArrows; i++)
             {
 
-                Main.EntitySpriteDraw(newTexture, drawPos - Main.screenPosition, null, color, rot, new Vector2(newTexture.Width * 0.5f, 0), 1f, 0, 0);
-                drawPos += perp * 15;
+                Main.EntitySpriteDraw(newTexture, drawPos - Main.screenPosition, null, color, rot, new Vector2(newTexture.Width * 0.5f, newTexture.Height), 1f, 0, 0);
+                drawPos += perp * arrowDist;
+                rot += rotStep;
             }
 
             
@@ -100,25 +123,63 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
             shootDirection = Projectile.velocity.SafeNormalize(Vector2.UnitX * Owner.direction);
             armPosition = Owner.RotatedRelativePoint(Owner.MountedCenter, true);
-            tipPosition = armPosition + shootDirection * (maxDrawDepth - chargedPercent * (maxDrawDepth - minDrawDepth));
-            
+
+            featherPosition = armPosition + shootDirection * (maxDrawDepth - chargedPercent * (maxDrawDepth - minDrawDepth));
+
+            Texture2D arrowTex = TextureAssets.Projectile[actualType].Value;
+
+            tipPosition = featherPosition + shootDirection * float.Max(arrowTex.Size().X, arrowTex.Size().Y);
+
+
             if (!Main.mouseLeft || (Owner.itemAnimation <= 1 && autoReuse))
             {
                 Projectile.aiStyle = ProjAIStyleID.Arrow;
-
-                
+               
                 Projectile.velocity = shootDirection * mag;
+                Projectile.rotation = shootDirection.ToRotation();
+
                 Owner.itemAnimation = 1;
                 Owner.itemTime = 1;
-                Projectile.Kill();
                 if (currentChargingFrames >= minChargingFrames) {
-                    int arrowIdx = Projectile.NewProjectile(Projectile.GetSource_FromThis(), tipPosition, Projectile.velocity, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
 
                     HelperFunctions.consumeAmmoForced(Owner, Owner.HeldItem, 1);
+
+
+                    float rot = Projectile.rotation + float.Pi;
+
+                    Vector2 perp = new Vector2((float)Math.Cos(rot), (float)Math.Sin(rot));
+                    int fullDist = (numArrows - 1) * arrowDist;
+                    Vector2 pos = tipPosition - perp * (fullDist / 2);
+
+                    float rotStep = 0;
+                    rot = 0;
+                    if (numArrows > 1)
+                    {
+                        rotStep = arrowSpread / (numArrows - 1);
+                        rot -= arrowSpread / 2;
+                    }
                     
-                    Projectile actualArrow = Main.projectile[arrowIdx];
-                    actualArrow.rotation = Projectile.velocity.ToRotation() + float.Pi / 2;
+                    for (int i = 0; i < numArrows; i++)
+                    {
+
+                        Vector2 newVel = Projectile.velocity.RotatedBy(rot);
+
+
+                        int arrowIdx = Projectile.NewProjectile(Projectile.GetSource_FromThis(), pos, newVel, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
+                       
+
+                        Projectile actualArrow = Main.projectile[arrowIdx];
+                        actualArrow.usesLocalNPCImmunity = true;
+                        actualArrow.localNPCHitCooldown = -1; 
+                        actualArrow.rotation = Projectile.velocity.ToRotation();
+
+                        pos += perp * arrowDist;
+                        rot += rotStep;
+                    }
+
                 }
+
+                Projectile.Kill();
             } else
             {
                 if (Owner.itemAnimation <= 1)

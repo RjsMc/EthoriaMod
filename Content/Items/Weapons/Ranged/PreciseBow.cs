@@ -20,7 +20,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             Item.height = 25;
             Item.damage = 770;
             Item.DamageType = DamageClass.Ranged;
-            Item.useAnimation = Item.useTime = 4;
+            Item.useAnimation = Item.useTime = 10;
 
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;

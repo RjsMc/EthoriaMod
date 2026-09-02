@@ -56,17 +56,18 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 int consumedAmmoId = source.AmmoItemIdUsed;
                 int firedProj = Projectile.NewProjectile(source, position, velocity, item.shoot, damage, knockback, player.whoAmI);
                 KnockedArrow theArrow = (KnockedArrow)(Main.projectile[firedProj].ModProjectile);
-                theArrow.minDrawDepth = int.Min(item.width, item.height) + 10 + 10;
-                theArrow.maxDrawDepth = int.Min(item.width, item.height) + 20 + 10;
+                theArrow.minDrawDepth = 0;
+                theArrow.maxDrawDepth = 10;
                 theArrow.minShootStrength = minShootStrength;
-                theArrow.maxShootStrength = velocity.Length(); 
+                theArrow.maxShootStrength = velocity.Length();
+                theArrow.currentChargingFrames = 0;
                 theArrow.maxChargingFrames = item.useTime;
                 theArrow.autoReuse = item.autoReuse;
                 theArrow.itemID = consumedAmmoId;
                 theArrow.actualType = type;
-                theArrow.minChargingFrames = int.Min(item.useAnimation, 10);
+                theArrow.minChargingFrames = int.Min((int) (item.useAnimation * (1.0f / player.GetAttackSpeed(DamageClass.Ranged))), 10);
                 theArrow.numArrows = ethPlayer.numArrows;
-
+                theArrow.hiddenFrames = 30;
                 return false;
             }
 
