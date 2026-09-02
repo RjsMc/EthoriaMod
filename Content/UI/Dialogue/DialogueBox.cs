@@ -26,6 +26,7 @@ namespace EthoriaMod.Content.UI.Dialogue
         private int borderThickness = 30;
         private int margin = 10;
 
+        private float scale = 0.75f;
 
         protected Asset<Texture2D> dialogueBoxTexture;
         protected Asset<Texture2D> dialogueNameTexture;
@@ -36,8 +37,8 @@ namespace EthoriaMod.Content.UI.Dialogue
             dialogueNameTexture = ModContent.Request<Texture2D>("EthoriaMod/Assets/UI/Dialogue/DialogueName");
 
 
-            Width.Set(dialogueBoxTexture.Value.Width, 0);
-            Height.Set(dialogueBoxTexture.Value.Height, 0);
+            Width.Set(dialogueBoxTexture.Value.Width * scale, 0);
+            Height.Set(dialogueBoxTexture.Value.Height * scale, 0);
 
             HAlign = 0.5f;
             VAlign = 1f;
@@ -54,8 +55,11 @@ namespace EthoriaMod.Content.UI.Dialogue
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
 
-            Width.Set(dialogueBoxTexture.Value.Width, 0);
-            Height.Set(dialogueBoxTexture.Value.Height, 0);
+            Width.Set(dialogueBoxTexture.Value.Width * scale, 0);
+            Height.Set(dialogueBoxTexture.Value.Height * scale, 0);
+
+            int scaledMargin = (int) (margin * scale);
+            int scaledBorderThickness = (int) (borderThickness * scale);
 
 
             CalculatedStyle dimensions = GetDimensions();
@@ -67,7 +71,8 @@ namespace EthoriaMod.Content.UI.Dialogue
             );
 
             Vector2 dialogueNameSize = dialogueNameTexture.Value.Size();
-            Rectangle dialogueNameRectangle = new Rectangle((int) dimensions.X + borderThickness, (int) dimensions.Y - borderThickness, (int) dialogueNameSize.X, (int) dialogueNameSize.Y);
+            Vector2 dialogueNamePos = new Vector2(dimensions.X + scaledBorderThickness, dimensions.Y - scaledBorderThickness);
+            Rectangle dialogueNameRectangle = new Rectangle((int) dialogueNamePos.X, (int) dialogueNamePos.Y, (int) ((float) dialogueNameSize.X * scale), (int) ((float) dialogueNameSize.Y * scale));
             spriteBatch.Draw(
                 dialogueNameTexture.Value,
                 dialogueNameRectangle,
@@ -100,7 +105,7 @@ namespace EthoriaMod.Content.UI.Dialogue
                 drawText += subText[i];
 
                 Vector2 textSize = font.MeasureString(drawText);
-                if (textSize.X >= dimensions.Width - 2 * (margin + borderThickness))
+                if (textSize.X >= dimensions.Width - 2 * (scaledMargin + scaledBorderThickness))
                 {
                     drawText = drawText.Insert(drawText.Length - 1, "\n");
                 }
@@ -112,8 +117,8 @@ namespace EthoriaMod.Content.UI.Dialogue
                 spriteBatch,
                 drawText,
                 new Vector2(
-                    dimensions.X + margin + borderThickness,
-                    dimensions.Y + margin + borderThickness 
+                    dimensions.X + scaledMargin + scaledBorderThickness,
+                    dimensions.Y + scaledMargin + scaledBorderThickness
                 ),
                 Color.White
             );
