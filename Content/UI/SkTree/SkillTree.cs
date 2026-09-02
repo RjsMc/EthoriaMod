@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Security.AccessControl;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using EthoriaMod.Common.Helpers;
+using EthoriaMod.Content.EthPlayer;
 using Humanizer.DateTimeHumanizeStrategy;
 using log4net.Core;
 using log4net.DateFormatter;
@@ -29,6 +31,22 @@ namespace EthoriaMod.Content.UI.SkTree
     
     public class SkillTree : TagSerializable
     {
+
+        public enum SkillID
+        {
+            None,
+            Start,
+            Warrior,
+            Ranger,
+            Quickdraw,
+            HeavyString,
+            DoubleShot,
+            Unwavering,
+            Precision,
+            Mage,
+            Summoner,
+
+        }
         public enum GrowDirection
         {
             None,
@@ -49,13 +67,14 @@ namespace EthoriaMod.Content.UI.SkTree
             public List<List<SkillTreeNode>> children;
             public List<SkillTreeNode> parents;
             public Vector2 drawPos;
-            public string skillName;
+            public SkillID skillID;
             public bool unlocked;
             public GrowDirection growDirection;
             public int w;
             public int h;
+            public bool hidden;
 
-            public SkillTreeNode(float drawX, float drawY, string skillName, GrowDirection growDirection = GrowDirection.None, bool unlocked = false)
+            public SkillTreeNode(float drawX, float drawY, SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false)
             {
                 parents = new List<SkillTreeNode>();
                 children = new List<List<SkillTreeNode>>();
@@ -65,15 +84,15 @@ namespace EthoriaMod.Content.UI.SkTree
                 }
                
                 this.drawPos = new Vector2(drawX, drawY);
-                this.skillName = skillName;
+                this.skillID = skillID;
                 this.unlocked = unlocked;
                 this.growDirection = growDirection;
-
+                this.hidden = hidden;
                 w = defaultSize;
                 h = defaultSize;
             }
 
-            public SkillTreeNode(string skillName, GrowDirection growDirection = GrowDirection.None, bool unlocked = false)
+            public SkillTreeNode(SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false)
             {
                 parents = new List<SkillTreeNode>();
                 children = new List<List<SkillTreeNode>>();
@@ -83,22 +102,23 @@ namespace EthoriaMod.Content.UI.SkTree
                 }
 
                 this.drawPos = new Vector2(0, 0);
-                this.skillName = skillName;
+                this.skillID = skillID;
                 this.unlocked = unlocked;
                 this.growDirection = growDirection;
+                this.hidden = hidden;
                 w = defaultSize;
                 h = defaultSize;
             }
 
-            public SkillTreeNode addChild(string skillName, List<SkillTreeNode> nodeList)
+            public SkillTreeNode addChild(SkillID skillID, List<SkillTreeNode> nodeList)
             {
-                return addChild(skillName, growDirection, nodeList);
+                return addChild(skillID, growDirection, nodeList);
             }
 
-            public SkillTreeNode addChild(string skillName, GrowDirection direction, List<SkillTreeNode> nodeList)
+            public SkillTreeNode addChild(SkillID skillID, GrowDirection direction, List<SkillTreeNode> nodeList)
             {
                 
-                SkillTreeNode child = new SkillTreeNode(skillName, direction);
+                SkillTreeNode child = new SkillTreeNode(skillID, direction);
 
                 children[(int) direction].Add(child);
                 child.parents.Add(this);
@@ -114,18 +134,25 @@ namespace EthoriaMod.Content.UI.SkTree
                     unlocked = false;
                 } else
                 {
-                    unlocked = true;
+                    unlock();
                 }
             }
             public void unlock()
             {
                 unlocked = true;
+                for (int i = 0; i < (int) GrowDirection.enumSize; i++)
+                {
+                    foreach (SkillTreeNode child in children[i])
+                    {
+                        child.hidden = false;
+                    }
+                }
             }
             public void unlock(bool state)
             {
                 if (!unlocked && state)
                 {
-                    unlocked = true;
+                    unlock();
                 }
             }
 
@@ -133,15 +160,36 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 return new TagCompound
                 {
-                    {"unlocked", unlocked}
+                    {"unlocked", unlocked},
+                    {"hidden", hidden}
                 };
             }
 
             public static SkillTreeNode Load(TagCompound tag)
             {
-                SkillTreeNode ret = new SkillTreeNode("");
+                SkillTreeNode ret = new SkillTreeNode(SkillID.None);
                 ret.unlocked = tag.GetBool("unlocked");
+                ret.hidden = tag.GetBool("hidden");
                 return ret;
+            }
+
+            public string getDescription()
+            {
+                switch (skillID)
+                {
+                    case SkillID.Ranger:
+                        return "Increase ranged damage by 25%";
+                   
+
+                    case SkillID.Quickdraw:
+                        return "Increase bow draw speed by 25%";
+
+                    case SkillID.Start:
+                        return "Once upon a time...";
+                
+                    
+                }
+                return "";
             }
 
             public static Func<TagCompound, SkillTreeNode> DESERIALIZER = Load;
@@ -150,16 +198,21 @@ namespace EthoriaMod.Content.UI.SkTree
         public SkillTree(int nodeDist = 100)
         {
             this.nodeDist = nodeDist;
-            root = new SkillTreeNode(0.5f, 0.5f, "Start", GrowDirection.None, true);
+            root = new SkillTreeNode(0.5f, 0.5f, SkillID.Start, GrowDirection.None);
             nodeList = new List<SkillTreeNode>();
             nodeList.Add(root);
 
-            root.addChild("Warrior", GrowDirection.Left, nodeList);
-            root.addChild("Ranger", GrowDirection.Right, nodeList);
-            root.addChild("Mage", GrowDirection.Up, nodeList);
-            SkillTreeNode summoner = root.addChild("Summoner", GrowDirection.Down, nodeList);
-            summoner.addChild("Fireball", nodeList);
-            summoner.addChild("BigBalls", nodeList);
+            root.addChild(SkillID.Warrior, GrowDirection.Left, nodeList);
+            SkillTreeNode ranger = root.addChild(SkillID.Ranger, GrowDirection.Right, nodeList);
+            SkillTreeNode quickDraw = ranger.addChild(SkillID.Quickdraw, nodeList);
+            ranger.addChild(SkillID.Precision, nodeList);
+            
+            quickDraw.addChild(SkillID.HeavyString, GrowDirection.Up, nodeList);
+            quickDraw.addChild(SkillID.DoubleShot, nodeList);
+            quickDraw.addChild(SkillID.Unwavering, nodeList);
+            root.addChild(SkillID.Mage, GrowDirection.Up, nodeList);
+            SkillTreeNode summoner = root.addChild(SkillID.Summoner, GrowDirection.Down, nodeList);
+
 
 
             updateChildrenPositions();
@@ -170,7 +223,6 @@ namespace EthoriaMod.Content.UI.SkTree
             Queue<SkillTreeNode> queue = new Queue<SkillTreeNode>();
 
             queue.Enqueue(root);
-
 
             while (queue.Count > 0) 
             {
@@ -188,6 +240,9 @@ namespace EthoriaMod.Content.UI.SkTree
                 Color color = Color.Black;
                 if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)) && nodeRect.Contains(new Point(Main.mouseX , Main.mouseY)))
                 {
+                    //MouseStrUI.mouseStr = curr.getDescription();
+
+                    Main.instance.MouseText(curr.getDescription());
                     color = Color.Yellow;
                     if (Main.mouseLeft && Main.mouseLeftRelease)
                     {
@@ -208,7 +263,10 @@ namespace EthoriaMod.Content.UI.SkTree
 
                     foreach (SkillTreeNode child in children)
                     {
-
+                        if (child.hidden)
+                        {
+                            continue;
+                        }
                         int childDrawXScreen = (int)(Main.screenWidth * (child.drawPos.X + displacement.X));
                         int childDrawYScreen = (int)(Main.screenHeight * (child.drawPos.Y + displacement.Y));
                         HelperFunctions.drawLine(spriteBatch, new Vector2(drawXScreen, drawYScreen), new Vector2(childDrawXScreen, childDrawYScreen), Color.Black);
@@ -219,8 +277,9 @@ namespace EthoriaMod.Content.UI.SkTree
 
 
                 spriteBatch.Draw(TextureAssets.MagicPixel.Value, rect, color);
+               
+                
             }
-
         }
         public void updateChildrenPositions()
         {
@@ -293,7 +352,22 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 if (nodeList[i].unlocked)
                 {
-                    Main.LocalPlayer.GetDamage(DamageClass.Ranged) += 100f;
+                    switch (nodeList[i].skillID)
+                    {
+                        case SkillID.Ranger:
+                            Main.LocalPlayer.GetDamage(DamageClass.Ranged) += 0.25f; 
+                            break;
+
+                        case SkillID.Quickdraw:
+                            Main.LocalPlayer.GetAttackSpeed(DamageClass.Ranged) += 0.25f;
+                            break;
+
+                        case SkillID.HeavyString:
+                            Main.LocalPlayer.GetModPlayer<EthoriaPlayer>();
+                            break;
+
+
+                    }                    
                 }
             }
         }
@@ -309,7 +383,7 @@ namespace EthoriaMod.Content.UI.SkTree
         public static SkillTree Load(TagCompound tag)
         {
             SkillTree ret = new SkillTree();
-
+            
             if (tag.ContainsKey("nodeList"))
             {
                 List<SkillTreeNode> savedNodes = (List<SkillTreeNode>)tag.GetList<SkillTreeNode>("nodeList");
@@ -318,6 +392,7 @@ namespace EthoriaMod.Content.UI.SkTree
                 for (int i = 0; i < l.Count; i++)
                 {
                     l[i].unlock(savedNodes[i].unlocked);
+                    l[i].hidden = savedNodes[i].hidden; 
                 }
             }
             return ret;
