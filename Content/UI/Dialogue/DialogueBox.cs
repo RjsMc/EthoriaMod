@@ -52,7 +52,7 @@ namespace EthoriaMod.Content.UI.Dialogue
             this.session = session;
             ResetWriter();
         }
-        public DialogueBox()
+        public DialogueBox(float yOffset)
         {
 
             dialogueBoxTexture = ModContent.Request<Texture2D>("EthoriaMod/Assets/UI/Dialogue/DialogueBox");
@@ -64,7 +64,7 @@ namespace EthoriaMod.Content.UI.Dialogue
             HAlign = 0.5f;
             VAlign = 1f;
 
-            Top.Set(-130, 0);
+            Top.Set(yOffset, 0);
         }
 
         public void FinishText()

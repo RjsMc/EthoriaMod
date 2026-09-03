@@ -18,6 +18,7 @@ namespace EthoriaMod.Content.UI.Dialogue
     public class DialogueUI : UIState
     {
         public DialogueBox DialogueBox { get; private set; }
+        public float yOffset => -110f;
         private DialoguePromptContainer PromptContainer;
         private List<DialoguePromptButton> promptButtons = new();
         private DialogueSession session;
@@ -25,7 +26,7 @@ namespace EthoriaMod.Content.UI.Dialogue
 
         public override void OnInitialize()
         {
-            DialogueBox = new DialogueBox();
+            DialogueBox = new DialogueBox(yOffset);
             Append(DialogueBox);
 
             PromptContainer = new DialoguePromptContainer(DialogueBox);
@@ -135,7 +136,7 @@ namespace EthoriaMod.Content.UI.Dialogue
 
             PromptContainer.SetSize(DialogueBox.BoxWidth, containerHeight);
 
-            PromptContainer.Top.Set(-130f - DialogueBox.BoxHeight, 0f);
+            PromptContainer.Top.Set(yOffset - DialogueBox.BoxHeight, 0f);
 
             for (int i = 0; i < promptCount; i++)
             {
