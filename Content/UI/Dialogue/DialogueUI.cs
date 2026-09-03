@@ -30,6 +30,32 @@ namespace EthoriaMod.Content.UI.Dialogue
 
             PromptContainer = new DialoguePromptContainer(DialogueBox);
             Append(PromptContainer);
+
+            OnLeftClick += (_, _) => { HandleDialogueClick(); };
+        }
+
+        private void HandleDialogueClick()
+        {
+            if (session == null) { return; }
+            ;
+            if (!DialogueBox.isTextFinished)
+            {
+                DialogueBox.FinishText();
+                return;
+            }
+
+            DialogueNode node = session.CurrentNode;
+
+            if (node.Prompts.Count > 0)
+            {
+                return;
+            }
+
+            if (session.Advance())
+            {
+                DialogueBox.SetSession(session);
+                CreatePromptButtons();
+            }
         }
 
         public void SetSession(DialogueSession session)
@@ -95,7 +121,7 @@ namespace EthoriaMod.Content.UI.Dialogue
 
                 button.HAlign = 1f;
 
-                button.Top.Set(i * (button.PromptHeight + spacing), 0f);
+                button.Top.Set(i * (button.PromptHeight + spacing) , 0f);
 
                 PromptContainer.Append(button);
                 promptButtons.Add(button);

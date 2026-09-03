@@ -19,9 +19,6 @@ namespace EthoriaMod.Content.UI.Dialogue
 {
     public class DialogueBox : UIElement
     {
-        private string speaker = "";
-        private string text = "";
-
         private int maxTypewriterTimer = 5;
         private int typewriterTimer = 0;
         private int currChar = 0;
@@ -37,23 +34,20 @@ namespace EthoriaMod.Content.UI.Dialogue
         protected Asset<Texture2D> dialogueBoxTexture;
         protected Asset<Texture2D> dialogueNameTexture;
 
+        public bool IsTextFinished
+        {
+            get
+            {
+                if (session == null) return true;
+                string text = session.CurrentNode.Text ?? "";
+                return currChar >= text.Length;
+            }
+        }
+
         public void SetSession(DialogueSession? session)
         {
             this.session = session;
-
-            if (session == null)
-            {
-                speaker = "";
-                text = "";
-                currChar = 0;
-                typewriterTimer = 0;
-                return;
-            }
-
-            speaker = session.CurrentNode.Speaker ?? "%null%";
-            text = session.CurrentNode.Text ?? "%null%";
-            currChar = 0;
-            typewriterTimer = 0;
+            ResetWriter();
         }
         public DialogueBox()
         {
@@ -71,31 +65,40 @@ namespace EthoriaMod.Content.UI.Dialogue
             Top.Set(-130, 0);
         }
 
-        public void SetDialogue(string speaker, string text)
+        public void FinishText()
         {
-            this.speaker = speaker;
-            this.text = text;
+            if (session == null) { return; }
+            string text = session.CurrentNode.Text ?? "";
+            currChar = text.Length;
+        }
+
+        public void ResetWriter()
+        {
             currChar = 0;
             typewriterTimer = 0;
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
+            CalculatedStyle dimensions = GetDimensions();
 
             Width.Set(dialogueBoxTexture.Value.Width * scale, 0);
             Height.Set(dialogueBoxTexture.Value.Height * scale, 0);
 
             int scaledMargin = (int) (margin * scale);
             int scaledBorderThickness = (int) (borderThickness * scale);
-
-
-            CalculatedStyle dimensions = GetDimensions();
-
+            
             spriteBatch.Draw(
                 dialogueBoxTexture.Value,
                 dimensions.ToRectangle(),
                 Color.White
             );
+
+            if (session == null) return;
+            DialogueNode node = session.CurrentNode;
+
+            string speaker = node.Speaker ?? "";
+            string text = node.Text ?? "";
 
             Vector2 dialogueNameSize = dialogueNameTexture.Value.Size();
             Vector2 dialogueNamePos = new Vector2(dimensions.X + scaledBorderThickness, dimensions.Y - scaledBorderThickness);
@@ -160,7 +163,6 @@ namespace EthoriaMod.Content.UI.Dialogue
                 }
 
             }
-            base.DrawSelf(spriteBatch);
         }
     }
 }
