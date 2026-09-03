@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using ReLogic.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 using Terraria.UI;
 
@@ -35,16 +37,6 @@ namespace EthoriaMod.Content.UI.Dialogue
                 "EthoriaMod/Assets/UI/Dialogue/DialoguePromptHover"
             );
 
-            Width.Set(
-                promptTexture.Value.Width * scale,
-                0
-            );
-
-            Height.Set(
-                promptTexture.Value.Height * scale,
-                0
-            );
-
             OnMouseOver += (_, _) =>
             {
                 hovered = true;
@@ -61,15 +53,9 @@ namespace EthoriaMod.Content.UI.Dialogue
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
-            Width.Set(
-                promptTexture.Value.Width * scale,
-                0
-            );
+            Width.Set(promptTexture.Value.Width * scale, 0);
 
-            Height.Set(
-                promptTexture.Value.Height * scale,
-                0
-            );
+            Height.Set(promptTexture.Value.Height * scale, 0);
 
             CalculatedStyle dimensions = GetDimensions();
             Texture2D texture = hovered ? promptHoverTexture.Value : promptTexture.Value; 
@@ -79,6 +65,14 @@ namespace EthoriaMod.Content.UI.Dialogue
                 dimensions.ToRectangle(),
                 Color.White
             );
+
+            // Printing text
+            DynamicSpriteFont font = FontAssets.MouseText.Value;
+            Vector2 textSize = font.MeasureString(text);
+
+            Vector2 textPosition = new Vector2(dimensions.X + (dimensions.Width - textSize.X) / 2f, dimensions.Y + (dimensions.Height - textSize.Y) / 1.5f);
+            Utils.DrawBorderString(spriteBatch, text, textPosition, Color.White);
+
         }
     }
 }
