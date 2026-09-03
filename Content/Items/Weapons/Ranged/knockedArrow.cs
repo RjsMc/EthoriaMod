@@ -41,7 +41,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
         public bool autoReuse = false;
         public int itemID = 0;
         public int numArrows = 1;
-        public float arrowSpread = float.Pi/8;
+        public float arrowSpread = float.Pi/16;
         public override string Texture => "EthoriaMod/Content/Items/Weapons/Ranged/KnockedArrow";
         private float interpSpd = 0.5f;
 
@@ -91,7 +91,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
 
             int fullDist = (numArrows - 1) * arrowDist;
-            Vector2 drawPos = featherPosition;
+            Vector2 drawPos = featherPosition - perp * (fullDist / 2);
             float rotStep = 0;
             if (numArrows > 1) {
 
@@ -171,7 +171,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                         Projectile actualArrow = Main.projectile[arrowIdx];
                         actualArrow.usesLocalNPCImmunity = true;
                         actualArrow.localNPCHitCooldown = -1; 
-                        actualArrow.rotation = Projectile.velocity.ToRotation();
+                        actualArrow.rotation = Projectile.velocity.ToRotation() + float.Pi / 2;
 
                         pos += perp * arrowDist;
                         rot += rotStep;

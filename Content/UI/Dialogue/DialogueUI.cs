@@ -76,7 +76,7 @@ namespace EthoriaMod.Content.UI.Dialogue
 
             if (promptCount == 0)
                 return;
-
+            Main.NewText("HERE");
             DialoguePromptButton firstButton = new DialoguePromptButton(0, node.Prompts[0].Text);
 
             float promptHeight = firstButton.PromptHeight;
@@ -94,7 +94,7 @@ namespace EthoriaMod.Content.UI.Dialogue
                 DialoguePromptButton button = i == 0 ? firstButton : new DialoguePromptButton(i, prompt.Text);
 
                 button.HAlign = 1f;
-
+                Main.NewText(button.PromptHeight.ToString() + ", " + i.ToString());
                 button.Top.Set(i * (button.PromptHeight + spacing), 0f);
 
                 PromptContainer.Append(button);

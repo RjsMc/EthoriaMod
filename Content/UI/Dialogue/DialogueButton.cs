@@ -19,8 +19,8 @@ namespace EthoriaMod.Content.UI.Dialogue
 
         public int PromptIndex { get; }
 
-        public float PromptWidth => promptTexture.Value.Width * scale;
-        public float PromptHeight => promptTexture.Value.Height * scale;
+        public float PromptWidth => scale;
+        public float PromptHeight => scale;
 
         public DialoguePromptButton(int promptIndex, string text)
         {

@@ -41,6 +41,7 @@ namespace EthoriaMod.Content.UI.SkTree
             Quickdraw,
             HeavyString,
             DoubleShot,
+            TripleShot,
             Unwavering,
             Precision,
             Mage,
@@ -187,9 +188,6 @@ namespace EthoriaMod.Content.UI.SkTree
                     case SkillID.Warrior:
                         return "Path of the Warrior";
 
-
-
-
                     case SkillID.Ranger:
                         return "Path of the Ranger\nIncrease ranged damage by 25%";
 
@@ -198,12 +196,13 @@ namespace EthoriaMod.Content.UI.SkTree
 
                     case SkillID.DoubleShot:
                         return "Bows shoot an extra arrow";
-                       
+
+                    case SkillID.TripleShot:
+                        return "Bows shoot an extra arrow";
+                        
 
                     case SkillID.Mage:
                         return "Path of the Mage";
-
-
 
                     case SkillID.Summoner:
                         return "Path of the Summoner";
@@ -233,8 +232,11 @@ namespace EthoriaMod.Content.UI.SkTree
             ranger.addChild(SkillID.Precision, nodeList);
             
             quickDraw.addChild(SkillID.HeavyString, GrowDirection.Up, nodeList);
-            quickDraw.addChild(SkillID.DoubleShot, nodeList);
+            SkillTreeNode doubleShot = quickDraw.addChild(SkillID.DoubleShot, nodeList);
             quickDraw.addChild(SkillID.Unwavering, nodeList);
+
+            doubleShot.addChild(SkillID.TripleShot, nodeList);
+
             root.addChild(SkillID.Mage, GrowDirection.Up, nodeList);
             SkillTreeNode summoner = root.addChild(SkillID.Summoner, GrowDirection.Down, nodeList);
 
@@ -395,6 +397,10 @@ namespace EthoriaMod.Content.UI.SkTree
 
                         case SkillID.DoubleShot:
                             ethPlayer.numArrows++;
+                            break;
+
+                        case SkillID.TripleShot:
+                            ethPlayer.numArrows += 11;
                             break;
 
 

@@ -47,7 +47,7 @@ namespace EthoriaMod.Content.EthPlayer
             tag["level"] = level;
             tag["currentExp"] = currentExp;
             tag["expToSyphon"] = expToSyphon;
-            tag["skillTree"] = skillTree;
+            //tag["skillTree"] = skillTree;
         }
 
         public override void LoadData(TagCompound tag)
