@@ -400,7 +400,7 @@ namespace EthoriaMod.Content.UI.SkTree
                             break;
 
                         case SkillID.TripleShot:
-                            ethPlayer.numArrows += 11;
+                            ethPlayer.numArrows += 100;
                             break;
 
 

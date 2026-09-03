@@ -147,7 +147,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
                     float rot = Projectile.rotation + float.Pi;
 
-                    Vector2 perp = new Vector2((float)Math.Cos(rot), (float)Math.Sin(rot));
+                    Vector2 perp = new Vector2((float)Math.Cos(rot + float.Pi/ 2), (float)Math.Sin(rot + float.Pi / 2));
                     int fullDist = (numArrows - 1) * arrowDist;
                     Vector2 pos = tipPosition - perp * (fullDist / 2);
 
@@ -164,7 +164,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
                         Vector2 newVel = Projectile.velocity.RotatedBy(rot);
 
-
+                        Main.NewText(pos);
                         int arrowIdx = Projectile.NewProjectile(Projectile.GetSource_FromThis(), pos, newVel, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
                        
 
