@@ -148,6 +148,7 @@ namespace EthoriaMod.Content.UI.Dialogue
 
                 button.HAlign = 1f;
 
+
                 button.Top.Set(i * (button.PromptHeight + spacing), 0f);
 
                 PromptContainer.Append(button);

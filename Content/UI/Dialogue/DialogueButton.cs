@@ -64,7 +64,9 @@ namespace EthoriaMod.Content.UI.Dialogue
             Width.Set(promptTexture.Value.Width * scale, 0);
             Height.Set(promptTexture.Value.Height * scale, 0);
 
+            Recalculate();
             CalculatedStyle dimensions = GetDimensions();
+       
             Texture2D texture = hovered ? promptHoverTexture.Value : promptTexture.Value;
 
             spriteBatch.Draw(
@@ -78,6 +80,10 @@ namespace EthoriaMod.Content.UI.Dialogue
             Vector2 textSize = font.MeasureString(text);
 
             Vector2 textPosition = new Vector2(dimensions.X + (dimensions.Width - textSize.X) / 2f, dimensions.Y + (dimensions.Height - textSize.Y) / 1.5f);
+
+           
+
+
             Utils.DrawBorderString(spriteBatch, text, textPosition, Color.White);
 
         }

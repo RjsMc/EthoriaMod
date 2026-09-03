@@ -164,7 +164,6 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
                         Vector2 newVel = Projectile.velocity.RotatedBy(rot);
 
-                        Main.NewText(pos);
                         int arrowIdx = Projectile.NewProjectile(Projectile.GetSource_FromThis(), pos, newVel, actualType, Projectile.damage, Projectile.knockBack, Owner.whoAmI);
                        
 
