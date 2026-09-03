@@ -2,8 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using ReLogic.Graphics;
+using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 
@@ -14,12 +17,12 @@ namespace EthoriaMod.Content.UI.Dialogue
         private Asset<Texture2D> promptTexture;
         private Asset<Texture2D> promptHoverTexture;
         private bool hovered;
-
         private float scale = 0.75f;
-
         private string text;
 
         public int PromptIndex { get; }
+        public Action<int> OnPromptSelected { get; set; }
+        //public bool Visible { get; set; } = false;
 
         public float PromptWidth => scale;
         public float PromptHeight => scale;
@@ -40,25 +43,29 @@ namespace EthoriaMod.Content.UI.Dialogue
             OnMouseOver += (_, _) =>
             {
                 hovered = true;
-                Main.NewText($"Mouse Out Prompt {PromptIndex}");
+                SoundEngine.PlaySound(SoundID.Item53 with { MaxInstances = 0 });
             };
-            
+
             OnMouseOut += (_, _) =>
             {
                 hovered = false;
-                Main.NewText($"Mouse Out Prompt {PromptIndex}");
             };
-            
+
+            OnLeftClick += (_, _) =>
+            {
+                OnPromptSelected?.Invoke(promptIndex);
+                SoundEngine.PlaySound(SoundID.Chat);
+            };
+
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
             Width.Set(promptTexture.Value.Width * scale, 0);
-
             Height.Set(promptTexture.Value.Height * scale, 0);
 
             CalculatedStyle dimensions = GetDimensions();
-            Texture2D texture = hovered ? promptHoverTexture.Value : promptTexture.Value; 
+            Texture2D texture = hovered ? promptHoverTexture.Value : promptTexture.Value;
 
             spriteBatch.Draw(
                 texture,

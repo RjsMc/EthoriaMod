@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Terraria;
 
 namespace EthoriaMod.Content.Dialogue
 {
@@ -22,6 +23,7 @@ namespace EthoriaMod.Content.Dialogue
             if (CurrentNode.NextNode == null) { return false; }
 
             CurrentNode = Dialogue.Nodes[CurrentNode.NextNode];
+            ExecuteCurrentAction();
             return true;
         }
 
@@ -34,8 +36,18 @@ namespace EthoriaMod.Content.Dialogue
             if (prompt.NextNode == null) { return false; }
 
             CurrentNode = Dialogue.Nodes[prompt.NextNode];
-
+            ExecuteCurrentAction();
             return true;
+        }
+
+        private void ExecuteCurrentAction()
+        {
+           switch (CurrentNode.Action)
+            {
+                case "End": // End the dialogue;
+                    DialogueManager.EndDialogue();
+                    break;
+            } 
         }
     }
 }

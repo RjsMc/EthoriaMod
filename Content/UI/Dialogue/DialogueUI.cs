@@ -34,11 +34,29 @@ namespace EthoriaMod.Content.UI.Dialogue
             OnLeftClick += (_, _) => { HandleDialogueClick(); };
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+
+            if (session == null) { return; }
+
+            DialogueNode node = session.CurrentNode;
+
+            if (DialogueBox.IsTextFinished && node.Prompts.Count > 0)
+            {
+                if (promptButtons.Count == 0)
+                {
+                    CreatePromptButtons();
+                }
+            }
+        }
+
         private void HandleDialogueClick()
         {
             if (session == null) { return; }
             ;
-            if (!DialogueBox.isTextFinished)
+
+            if (!DialogueBox.IsTextFinished)
             {
                 DialogueBox.FinishText();
                 return;
@@ -53,9 +71,20 @@ namespace EthoriaMod.Content.UI.Dialogue
 
             if (session.Advance())
             {
-                DialogueBox.SetSession(session);
-                CreatePromptButtons();
+                DialogueBox.ResetWriter();
+                ClearPromptButtons();
             }
+        }
+
+        private void ClearPromptButtons()
+        {
+            foreach (DialoguePromptButton button in promptButtons)
+            {
+                PromptContainer.RemoveChild(button);
+            }
+
+            promptButtons.Clear();
+            PromptContainer.Height.Set(0f, 0f);
         }
 
         public void SetSession(DialogueSession session)
@@ -64,7 +93,7 @@ namespace EthoriaMod.Content.UI.Dialogue
 
             DialogueBox.SetSession(session);
 
-            CreatePromptButtons();
+            ClearPromptButtons();
         }
 
         public void ClearSession()
@@ -72,12 +101,7 @@ namespace EthoriaMod.Content.UI.Dialogue
             session = null;
             DialogueBox.SetSession(null);
 
-            foreach (DialoguePromptButton button in promptButtons)
-            {
-                PromptContainer.RemoveChild(button);
-            }
-
-            promptButtons.Clear();
+            ClearPromptButtons();
         }
 
         private void CreatePromptButtons()
@@ -102,7 +126,7 @@ namespace EthoriaMod.Content.UI.Dialogue
 
             if (promptCount == 0)
                 return;
-            Main.NewText("HERE");
+
             DialoguePromptButton firstButton = new DialoguePromptButton(0, node.Prompts[0].Text);
 
             float promptHeight = firstButton.PromptHeight;
@@ -119,17 +143,25 @@ namespace EthoriaMod.Content.UI.Dialogue
 
                 DialoguePromptButton button = i == 0 ? firstButton : new DialoguePromptButton(i, prompt.Text);
 
-                button.HAlign = 1f;
-<<<<<<< HEAD
-                Main.NewText(button.PromptHeight.ToString() + ", " + i.ToString());
-                button.Top.Set(i * (button.PromptHeight + spacing), 0f);
-=======
+                button.OnPromptSelected = HandlePromptSelected;
 
-                button.Top.Set(i * (button.PromptHeight + spacing) , 0f);
->>>>>>> cb3ecbbe0525aebb637ab3f02473acdb12d9e7df
+                button.HAlign = 1f;
+
+                button.Top.Set(i * (button.PromptHeight + spacing), 0f);
 
                 PromptContainer.Append(button);
                 promptButtons.Add(button);
+            }
+        }
+
+        private void HandlePromptSelected(int promptIndex)
+        {
+            if (session == null) return;
+
+            if (session.SelectPrompt(promptIndex))
+            {
+                DialogueBox.ResetWriter();
+                ClearPromptButtons();
             }
         }
     }

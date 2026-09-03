@@ -7,19 +7,19 @@ using Terraria.ModLoader;
 
 namespace EthoriaMod.Common.Developer
 {
-    internal class DialogueTestCommand : ModCommand
+    internal class DialogueTestCommand2 : ModCommand
     {
         public override CommandType Type => CommandType.Chat;
-        public override string Command => "dt";
+        public override string Command => "dt2";
         public override string Description => "Test the dialogue system";
-        public override string Usage => "/dt";
+        public override string Usage => "/dt2";
 
         public override void Action(CommandCaller caller, string input, string[] args)
         {
             // Load the dialogue
-            TestNPCDialogue.Load();
+            TestNPC2Dialogue.Load();
 
-            Dialogue dialogue = TestNPCDialogue.Dialogue;
+            Dialogue dialogue = TestNPC2Dialogue.Dialogue;
 
             // Create a session
             DialogueSession session = new(dialogue);

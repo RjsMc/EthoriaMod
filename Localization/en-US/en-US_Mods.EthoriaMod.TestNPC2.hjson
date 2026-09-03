@@ -1,0 +1,79 @@
+StartNode: Hello
+
+Nodes: {
+	Hello: {
+		Speaker: Mr Mysterious Person!
+		Text: what's good
+
+		Prompts: {
+			0: {
+				Text: you're very nonchalant
+				NextNode: HelloReply1
+			}
+
+			1: {
+				Text: nothing much. You?
+				NextNode: HelloReply2
+			}
+
+			2: {
+				Text: Nevermind byebye!
+				NextNode: End
+			}
+		}
+	}
+
+	HelloReply1: {
+		Speaker: Mr Mysterious Person!
+		Text: *blushes* uwu *blush*
+
+		Prompts: {
+			0: {
+				Text: wow nevermind.
+				NextNode: End
+			}
+
+			1: {
+				Text: ew
+				NextNode: End
+			}
+
+			2: {
+				Text: UWU
+				NextNode: UwUReply
+			}
+		}
+	}
+
+	HelloReply2: {
+		Speaker: Mr Mysterious Person!
+		Text: honestly i dont know. i always wonder what would happen if i turned into sphagetti you know? How do you even spell sphagetti? I would eat my own balls so it doesn't really matter. wow. I love sphagetti.
+		NextNode: HelloReply2Cont
+	}
+
+	HelloReply2Cont: {
+		Speaker: Mr Mysterious Person!
+		Text: oh I really got side tracked.
+
+		Prompts: {
+			0: {
+				Text: I'm very happy for you.
+				NextNode: End
+			}
+		}
+	}
+
+	UwUReply: {
+		Speaker: Mr Mysterious Person!
+		Text: *wags little tail* UWU! *blushes*
+
+		Prompts: {
+			0: {
+				Text: MEW MEW!
+				NextNode: End
+			}
+		}
+	}
+
+	End.Action: End
+}

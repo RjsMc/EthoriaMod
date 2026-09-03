@@ -93,7 +93,7 @@ namespace EthoriaMod.Content.EthPlayer
             if (PlayerInput.Triggers.JustPressed.MouseLeft)
             {
                 // This logic will run exactly once per click
-                Main.NewText("Left mouse button was clicked once!");
+                //Main.NewText("Left mouse button was clicked once!");
             }
         }
         public override void PreUpdateMovement()
