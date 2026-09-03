@@ -130,17 +130,30 @@ namespace EthoriaMod.Content.UI.Dialogue
             String subText = text.Substring(0, currChar);
             String drawText = "";
 
-            String[] words = drawText.Split(' ');
-            for (int i = 0; i < currChar; i++)
-            {
-                drawText += subText[i];
+            string[] words = subText.Split(' ');
 
-                Vector2 textSize = font.MeasureString(drawText);
+            string currentLine = "";
+
+            foreach (string word in words)
+            {
+                string testLine = currentLine.Length == 0
+                    ? word
+                    : currentLine + " " + word;
+
+                Vector2 textSize = font.MeasureString(testLine);
+
                 if (textSize.X >= dimensions.Width - 2 * (margin + borderThickness))
                 {
-                    drawText = drawText.Insert(drawText.Length - 1, "\n");
+                    drawText += currentLine + "\n";
+                    currentLine = word;
+                }
+                else
+                {
+                    currentLine = testLine;
                 }
             }
+
+            drawText += currentLine;
 
             // DialogueText
             Utils.DrawBorderString(
@@ -166,7 +179,10 @@ namespace EthoriaMod.Content.UI.Dialogue
                     if (!playedTextSound)
                     {
                         playedTextSound = true;
-                        SoundEngine.PlaySound(SoundID.Clown);
+                        SoundEngine.PlaySound(SoundID.Clown with
+                        {
+                            MaxInstances = 0
+                        });
                     }
 
                     typewriterTimer = maxTypewriterTimer;
