@@ -194,6 +194,9 @@ namespace EthoriaMod.Content.UI.SkTree
                     case SkillID.Quickdraw:
                         return "Increase bow draw speed by 25%";
 
+                   
+                        
+
                     case SkillID.DoubleShot:
                         return "Bows shoot an extra arrow";
 
@@ -400,7 +403,7 @@ namespace EthoriaMod.Content.UI.SkTree
                             break;
 
                         case SkillID.TripleShot:
-                            ethPlayer.numArrows += 100;
+                            ethPlayer.numArrows++;
                             break;
 
 

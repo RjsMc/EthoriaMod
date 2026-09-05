@@ -123,7 +123,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
             shootDirection = Projectile.velocity.SafeNormalize(Vector2.UnitX * Owner.direction);
             armPosition = Owner.RotatedRelativePoint(Owner.MountedCenter, true);
-
+            
             featherPosition = armPosition + shootDirection * (maxDrawDepth - chargedPercent * (maxDrawDepth - minDrawDepth));
 
             Texture2D arrowTex = TextureAssets.Projectile[actualType].Value;
@@ -203,8 +203,8 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 Owner.ChangeDir(Projectile.direction);
 
                 Owner.itemRotation = (Projectile.velocity * Projectile.direction).ToRotation();
-
-
+               
+                
 
                 Owner.heldProj = Projectile.whoAmI;
 
