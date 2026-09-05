@@ -2,6 +2,8 @@
 using Humanizer;
 using JetBrains.Annotations;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Steamworks;
 using System;
 using System.Collections.Generic;
@@ -24,6 +26,12 @@ namespace EthoriaMod.Content.UI.Dialogue
         private DialogueSession session;
         private float spacing = 45f;
 
+        // arrow
+        //public Asset<Texture2D> continueArrowTexture;
+        //public float arrowTimer = 0f;
+        //public bool showContinueArrow = false;
+        //public bool inConversation = false;
+
         public override void OnInitialize()
         {
             DialogueBox = new DialogueBox(yOffset);
@@ -37,11 +45,12 @@ namespace EthoriaMod.Content.UI.Dialogue
 
         public override void Update(GameTime gameTime)
         {
-            base.Update(gameTime);
 
             if (session == null) { return; }
 
             DialogueNode node = session.CurrentNode;
+
+            //if (!DialogueBox.IsTextFinished) showContinueArrow = false;
 
             if (DialogueBox.IsTextFinished && node.Prompts.Count > 0)
             {
@@ -49,7 +58,14 @@ namespace EthoriaMod.Content.UI.Dialogue
                 {
                     CreatePromptButtons();
                 }
-            }
+                //showContinueArrow = false;
+            } 
+            //else if (DialogueBox.IsTextFinished && node.Prompts.Count == 0)
+            //{
+            //    showContinueArrow = true;
+            //}
+
+            //arrowTimer += 0.1f;
         }
 
         private void HandleDialogueClick()
@@ -93,6 +109,7 @@ namespace EthoriaMod.Content.UI.Dialogue
             this.session = session;
 
             DialogueBox.SetSession(session);
+            //inConversation = true;
 
             ClearPromptButtons();
         }
@@ -101,6 +118,9 @@ namespace EthoriaMod.Content.UI.Dialogue
         {
             session = null;
             DialogueBox.SetSession(null);
+            //inConversation = false;
+            //showContinueArrow = false;
+            //arrowTimer = 0f;
 
             ClearPromptButtons();
         }
@@ -148,7 +168,6 @@ namespace EthoriaMod.Content.UI.Dialogue
 
                 button.HAlign = 1f;
 
-
                 button.Top.Set(i * (button.PromptHeight + spacing), 0f);
 
                 PromptContainer.Append(button);
@@ -166,5 +185,17 @@ namespace EthoriaMod.Content.UI.Dialogue
                 ClearPromptButtons();
             }
         }
+
+        //protected override void DrawSelf(SpriteBatch spriteBatch)
+        //{
+        //    if (!showContinueArrow || !inConversation) return;
+
+        //    float bounce = MathF.Sin(arrowTimer) * 2f;
+        //    CalculatedStyle boxDimensions = DialogueBox.GetDimensions();
+        //    Vector2 position = new Vector2(boxDimensions.X + boxDimensions.Width - DialogueBox.borderThickness - DialogueBox.margin, 
+        //        boxDimensions.Y + 30f - DialogueBox.borderThickness - DialogueBox.margin + bounce);
+
+        //    spriteBatch.Draw(continueArrowTexture.Value, position, Color.White);
+        //}
     }
 }

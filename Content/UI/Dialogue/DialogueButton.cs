@@ -69,23 +69,19 @@ namespace EthoriaMod.Content.UI.Dialogue
        
             Texture2D texture = hovered ? promptHoverTexture.Value : promptTexture.Value;
 
-            spriteBatch.Draw(
-                texture,
-                dimensions.ToRectangle(),
-                Color.White
-            );
-
             // Printing text
             DynamicSpriteFont font = FontAssets.MouseText.Value;
             Vector2 textSize = font.MeasureString(text);
 
             Vector2 textPosition = new Vector2(dimensions.X + (dimensions.Width - textSize.X) / 2f, dimensions.Y + (dimensions.Height - textSize.Y) / 1.5f);
 
-           
-
+            spriteBatch.Draw(
+                texture,
+                dimensions.ToRectangle(),
+                Color.White
+            );
 
             Utils.DrawBorderString(spriteBatch, text, textPosition, Color.White);
-
         }
     }
 }
