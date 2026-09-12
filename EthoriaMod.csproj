@@ -22,7 +22,6 @@
 	  <Folder Include="Assets\Music\" />
 	  <Folder Include="Assets\Boss\" />
 	  <Folder Include="Assets\Textures\" />
-	  <Folder Include="Assets\Sounds\" />
 	  <Folder Include="Common\Sets\" />
 	  <Folder Include="Content\Items\Armor\TestArmorClass\" />
 	  <Folder Include="Content\Boss\" />
