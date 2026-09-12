@@ -16,6 +16,7 @@ using EthoriaMod.Content.Dialogue;
 using System.Media;
 using Terraria.Audio;
 using Terraria.ID;
+using Steamworks;
 
 #nullable enable
 namespace EthoriaMod.Content.UI.Dialogue
@@ -23,14 +24,16 @@ namespace EthoriaMod.Content.UI.Dialogue
     public class DialogueBox : UIElement
     {
         private int maxTypewriterTimer = 1;
+        private int maxSoundTimerMultiplier = 10; 
         private int typewriterTimer = 0;
+        private int soundTimer = 0;
+        private int soundClip;
         private int currChar = 0;
         private int borderThickness = 30;
         private int margin = 10;
         private int arrowMargin = 5;
         private int nametagOffset = 7;
         private float scale = 0.75f;
-        private bool playedTextSound = false;
         public float BoxWidth => dialogueBoxTexture.Value.Width * scale;
         public float BoxHeight => dialogueBoxTexture.Value.Height * scale;
         private DialogueSession? session;
@@ -42,6 +45,7 @@ namespace EthoriaMod.Content.UI.Dialogue
         // arrow
         private float arrowTimer = 0f;
         private bool showContinueArrow = false;
+        private float bounce = 0f;
 
         public bool IsTextFinished
         {
@@ -86,12 +90,17 @@ namespace EthoriaMod.Content.UI.Dialogue
         {
             currChar = 0;
             typewriterTimer = 0;
-            playedTextSound = false;
         }
 
-        public override void Update(GameTime gameTime)
+        private void UpdateArrow(DialogueNode node)
         {
-            
+            bounce = MathF.Sin(arrowTimer) * 2f;
+            arrowTimer += 0.1f;
+
+            showContinueArrow =
+                IsTextFinished &&
+                node.Prompts.Count == 0 &&
+                node.NextNode != null;
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
@@ -102,14 +111,9 @@ namespace EthoriaMod.Content.UI.Dialogue
                 return;
             }
 
-            arrowTimer += 0.1f;
-
             DialogueNode node = session.CurrentNode;
 
-            showContinueArrow =
-                IsTextFinished &&
-                node.Prompts.Count == 0 &&
-                node.NextNode != null;
+            UpdateArrow(node);
 
             Width.Set(dialogueBoxTexture.Value.Width * scale, 0);
             Height.Set(dialogueBoxTexture.Value.Height * scale, 0);
@@ -127,8 +131,6 @@ namespace EthoriaMod.Content.UI.Dialogue
 
             if (showContinueArrow)
             {
-                float bounce = MathF.Sin(arrowTimer) * 2f;
-
                 Vector2 position = new Vector2(
                     dimensions.X + dimensions.Width - borderThickness - arrowMargin - continueArrowTexture.Value.Width,
                     dimensions.Y + dimensions.Height - borderThickness - arrowMargin - continueArrowTexture.Value.Height + bounce
@@ -206,6 +208,22 @@ namespace EthoriaMod.Content.UI.Dialogue
                 Color.White
             );
 
+            if (soundTimer > 0)
+            {
+                soundTimer--;
+            } else
+            {
+                if (!IsTextFinished)
+                {
+                    soundClip = Main.rand.Next(1, 3);
+                    SoundEngine.PlaySound(new SoundStyle($"EthoriaMod/Assets/Sounds/Dialogue/baseTalk{soundClip}").WithVolumeScale(0.4f) with
+                    {
+                        MaxInstances = 0
+                    });
+                    soundTimer = maxTypewriterTimer * maxSoundTimerMultiplier;
+                }
+            }
+
             if (typewriterTimer > 0)
             {
                 typewriterTimer--;
@@ -216,14 +234,16 @@ namespace EthoriaMod.Content.UI.Dialogue
                 {
                     currChar++;
 
-                    if (!playedTextSound)
-                    {
-                        playedTextSound = true;
-                        SoundEngine.PlaySound(SoundID.Clown with
-                        {
-                            MaxInstances = 0
-                        });
-                    }
+                    
+
+                    //if (!playedTextSound)
+                    //{
+                    //    playedTextSound = true;
+                    //    //SoundEngine.PlaySound(new SoundStyle("EthoriaMod/Assets/Sounds/Dialogue/baseTalk") with
+                    //    //{
+                    //    //    MaxInstances = 0
+                    //    //});
+                    //}
 
                     typewriterTimer = maxTypewriterTimer;
                 }
