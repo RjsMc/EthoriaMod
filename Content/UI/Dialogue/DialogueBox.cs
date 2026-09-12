@@ -27,6 +27,7 @@ namespace EthoriaMod.Content.UI.Dialogue
         private int currChar = 0;
         private int borderThickness = 30;
         private int margin = 10;
+        private int arrowMargin = 5;
         private int nametagOffset = 7;
         private float scale = 0.75f;
         private bool playedTextSound = false;
@@ -36,6 +37,11 @@ namespace EthoriaMod.Content.UI.Dialogue
 
         protected Asset<Texture2D> dialogueBoxTexture;
         protected Asset<Texture2D> dialogueNameTexture;
+        protected Asset<Texture2D> continueArrowTexture;
+
+        // arrow
+        private float arrowTimer = 0f;
+        private bool showContinueArrow = false;
 
         public bool IsTextFinished
         {
@@ -57,6 +63,7 @@ namespace EthoriaMod.Content.UI.Dialogue
 
             dialogueBoxTexture = ModContent.Request<Texture2D>("EthoriaMod/Assets/UI/Dialogue/DialogueBox");
             dialogueNameTexture = ModContent.Request<Texture2D>("EthoriaMod/Assets/UI/Dialogue/DialogueName");
+            continueArrowTexture = ModContent.Request<Texture2D>("EthoriaMod/Assets/UI/Dialogue/DialogueArrow");
 
             Width.Set(dialogueBoxTexture.Value.Width * scale, 0);
             Height.Set(dialogueBoxTexture.Value.Height * scale, 0);
@@ -82,8 +89,28 @@ namespace EthoriaMod.Content.UI.Dialogue
             playedTextSound = false;
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            
+        }
+
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
+            if (session == null)
+            {
+                showContinueArrow = false;
+                return;
+            }
+
+            arrowTimer += 0.1f;
+
+            DialogueNode node = session.CurrentNode;
+
+            showContinueArrow =
+                IsTextFinished &&
+                node.Prompts.Count == 0 &&
+                node.NextNode != null;
+
             Width.Set(dialogueBoxTexture.Value.Width * scale, 0);
             Height.Set(dialogueBoxTexture.Value.Height * scale, 0);
 
@@ -98,8 +125,21 @@ namespace EthoriaMod.Content.UI.Dialogue
                 Color.White
             );
 
-            if (session == null) return;
-            DialogueNode node = session.CurrentNode;
+            if (showContinueArrow)
+            {
+                float bounce = MathF.Sin(arrowTimer) * 2f;
+
+                Vector2 position = new Vector2(
+                    dimensions.X + dimensions.Width - borderThickness - arrowMargin - continueArrowTexture.Value.Width,
+                    dimensions.Y + dimensions.Height - borderThickness - arrowMargin - continueArrowTexture.Value.Height + bounce
+                );
+
+                spriteBatch.Draw(
+                    continueArrowTexture.Value,
+                    position,
+                    Color.White
+                );
+            }
 
             string speaker = node.Speaker ?? "";
             string text = node.Text ?? "";
