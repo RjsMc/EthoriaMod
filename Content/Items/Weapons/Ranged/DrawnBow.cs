@@ -12,13 +12,14 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static EthoriaMod.Content.UI.SkTree.SkillTree;
 namespace EthoriaMod.Content.Items.Weapons.Ranged
 {
     internal class DrawnBow : GlobalItem
     {
         
         public static float minShootStrength = 1.0f;
-
+        public static int originalUseTime = 0;
         public static List<int> exclude = [3854, ItemID.Phantasm, ItemID.Tsunami, ItemID.FairyQueenRangedItem, ItemID.HellwingBow, ItemID.PulseBow, ItemID.GoldBow];
         public override void SetDefaults(Item item)
         {
@@ -27,7 +28,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
 
                 item.useTime = item.useAnimation;
                 item.useStyle = ItemUseStyleID.Shoot;
-
+                originalUseTime = item.useTime;
                 item.channel = true;
                 
                 item.shoot = ModContent.ProjectileType<KnockedArrow>();
@@ -43,12 +44,43 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 return false;
             }
             return true;
-        }   
+        }
 
-        
+
+        public override bool CanUseItem(Item item, Player player)
+        {
+            if (!exclude.Contains(item.type) && item.useAmmo == AmmoID.Arrow && item.shoot > ProjectileID.None) { 
+                if (player.altFunctionUse == 2)
+                {
+
+                    item.useTime = 5;
+                    item.useAnimation = 5;
+                    item.shoot = ProjectileID.Bee;
+                } else
+                {
+                    item.useTime = originalUseTime;
+                    item.useAnimation = originalUseTime;
+                    item.shoot = ModContent.ProjectileType<KnockedArrow>();
+                }
+               
+            }
+            return base.CanUseItem(item, player);
+        }
+
+
+        public override bool AltFunctionUse(Item item, Player player)
+        {
+            EthoriaPlayer ethPlayer = player.GetModPlayer<EthoriaPlayer>();
+            if (ethPlayer.UnlockedSkill(SkillID.LoadedShot) && !exclude.Contains(item.type) && item.useAmmo == AmmoID.Arrow && item.shoot > ProjectileID.None)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            if (!exclude.Contains(item.type) && item.useAmmo == AmmoID.Arrow && item.shoot > ProjectileID.None)
+            if (!exclude.Contains(item.type) && item.useAmmo == AmmoID.Arrow && item.shoot == ModContent.ProjectileType<KnockedArrow>())
             {
 
                 EthoriaPlayer ethPlayer = player.GetModPlayer<EthoriaPlayer>();

@@ -13,6 +13,7 @@ using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using static EthoriaMod.Content.UI.SkTree.SkillTree;
 
 namespace EthoriaMod.Content.EthPlayer
 {
@@ -193,6 +194,11 @@ namespace EthoriaMod.Content.EthPlayer
         public void gainExp(int ammount)
         {
             this.expToSyphon += ammount;
+        }
+
+        public bool UnlockedSkill(SkillID skillID)
+        {
+            return skillTree.nodeList[(int)skillID].unlocked;
         }
     }
 }

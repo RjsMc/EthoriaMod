@@ -39,13 +39,20 @@ namespace EthoriaMod.Content.UI.SkTree
             Warrior,
             Ranger,
             Quickdraw,
-            HeavyString,
+            LoadedShot,
+            DmgBoost1,
+            Velocity,
             DoubleShot,
             TripleShot,
             Unwavering,
             Precision,
             Mage,
+            
             Summoner,
+            
+            
+            
+            EnumSize
 
         }
         public enum GrowDirection
@@ -124,7 +131,7 @@ namespace EthoriaMod.Content.UI.SkTree
                 children[(int) direction].Add(child);
                 child.parents.Add(this);
 
-                nodeList.Add(child);
+                nodeList[(int) child.skillID] = child;
                 return child;
             }
 
@@ -194,9 +201,15 @@ namespace EthoriaMod.Content.UI.SkTree
                     case SkillID.Quickdraw:
                         return "Increase bow draw speed by 25%";
 
-                   
-                        
+                    case SkillID.LoadedShot:
+                        return "Right click ability shoots an arrow on demand";
 
+                    case SkillID.DmgBoost1:
+                        return "Increase ranged damage by 25%";
+
+                    case SkillID.Velocity:
+                        return "Bows shoot at a higher accuracy and velocity";
+                       
                     case SkillID.DoubleShot:
                         return "Bows shoot an extra arrow";
 
@@ -226,17 +239,21 @@ namespace EthoriaMod.Content.UI.SkTree
         {
             this.nodeDist = nodeDist;
             root = new SkillTreeNode(0.5f, 0.5f, SkillID.Start, GrowDirection.None);
-            nodeList = new List<SkillTreeNode>();
-            nodeList.Add(root);
+            nodeList = Enumerable.Repeat((SkillTreeNode)null, (int) SkillID.EnumSize).ToList();
+            nodeList[(int) root.skillID] = root;
 
             root.addChild(SkillID.Warrior, GrowDirection.Left, nodeList);
             SkillTreeNode ranger = root.addChild(SkillID.Ranger, GrowDirection.Right, nodeList);
             SkillTreeNode quickDraw = ranger.addChild(SkillID.Quickdraw, nodeList);
             ranger.addChild(SkillID.Precision, nodeList);
             
-            quickDraw.addChild(SkillID.HeavyString, GrowDirection.Up, nodeList);
-            SkillTreeNode doubleShot = quickDraw.addChild(SkillID.DoubleShot, nodeList);
-            quickDraw.addChild(SkillID.Unwavering, nodeList);
+            quickDraw.addChild(SkillID.LoadedShot, GrowDirection.Up, nodeList);
+
+            SkillTreeNode dmgBoost1 = quickDraw.addChild(SkillID.DmgBoost1, nodeList); 
+
+            SkillTreeNode doubleShot = dmgBoost1.addChild(SkillID.DoubleShot, nodeList);
+            SkillTreeNode velocity = dmgBoost1.addChild(SkillID.Velocity, nodeList);
+           
 
             doubleShot.addChild(SkillID.TripleShot, nodeList);
 
@@ -382,7 +399,7 @@ namespace EthoriaMod.Content.UI.SkTree
             EthoriaPlayer ethPlayer = player.GetModPlayer<EthoriaPlayer>();
             for (int i = 0; i < nodeList.Count; i++)
             {
-                if (nodeList[i].unlocked)
+                if (nodeList[i] != null && nodeList[i].unlocked)
                 {
                     switch (nodeList[i].skillID)
                     {
@@ -394,8 +411,14 @@ namespace EthoriaMod.Content.UI.SkTree
                             player.GetAttackSpeed(DamageClass.Ranged) += 0.25f;
                             break;
 
-                        case SkillID.HeavyString:
-                            player.GetModPlayer<EthoriaPlayer>();
+                
+
+                        case SkillID.DmgBoost1:
+                            player.GetDamage(DamageClass.Ranged) += 0.25f;
+                            break;
+
+                        case SkillID.Velocity:
+                            
                             break;
 
                         case SkillID.DoubleShot:
@@ -405,6 +428,8 @@ namespace EthoriaMod.Content.UI.SkTree
                         case SkillID.TripleShot:
                             ethPlayer.numArrows++;
                             break;
+
+                
 
 
                     }                    
