@@ -257,6 +257,11 @@ namespace EthoriaMod.Content.UI.SkTree
 
             doubleShot.addChild(SkillID.TripleShot, nodeList);
 
+
+
+
+
+
             root.addChild(SkillID.Mage, GrowDirection.Up, nodeList);
             SkillTreeNode summoner = root.addChild(SkillID.Summoner, GrowDirection.Down, nodeList);
 
@@ -411,14 +416,8 @@ namespace EthoriaMod.Content.UI.SkTree
                             player.GetAttackSpeed(DamageClass.Ranged) += 0.25f;
                             break;
 
-                
-
                         case SkillID.DmgBoost1:
                             player.GetDamage(DamageClass.Ranged) += 0.25f;
-                            break;
-
-                        case SkillID.Velocity:
-                            
                             break;
 
                         case SkillID.DoubleShot:

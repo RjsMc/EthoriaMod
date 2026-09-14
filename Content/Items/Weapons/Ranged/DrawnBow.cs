@@ -78,13 +78,18 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             return false;
         }
 
+        
         public override bool Shoot(Item item, Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            EthoriaPlayer ethPlayer = player.GetModPlayer<EthoriaPlayer>();
             if (!exclude.Contains(item.type) && item.useAmmo == AmmoID.Arrow && item.shoot == ModContent.ProjectileType<KnockedArrow>())
             {
+               
 
-                EthoriaPlayer ethPlayer = player.GetModPlayer<EthoriaPlayer>();
-                
+                if (ethPlayer.UnlockedSkill(SkillID.Velocity))
+                {
+                    velocity *= 1.2f;
+                }
                 int consumedAmmoId = source.AmmoItemIdUsed;
                 int firedProj = Projectile.NewProjectile(source, position, velocity, item.shoot, damage, knockback, player.whoAmI);
                 KnockedArrow theArrow = (KnockedArrow)(Main.projectile[firedProj].ModProjectile);
@@ -104,7 +109,6 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
             }
 
             return true;
-            
         } 
     }
 }

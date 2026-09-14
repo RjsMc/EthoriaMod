@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EthoriaMod.Common.Developer;
 using EthoriaMod.Content.EthPlayer;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -55,14 +56,14 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 case SkillTreeState.Closed:
 
-                    if (Main.mouseRight && Main.mouseRightRelease)
+                    if (EthoriaKeybinds.skillTreeHotKey.JustPressed)
                     {
                         state = SkillTreeState.Open;
                     }
                     break;
 
                 case SkillTreeState.Open:
-                    if (Main.mouseRight && Main.mouseRightRelease)
+                    if (EthoriaKeybinds.skillTreeHotKey.JustPressed)
                     {
                         state = SkillTreeState.Closed;
                     }

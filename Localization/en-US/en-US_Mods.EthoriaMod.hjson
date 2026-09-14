@@ -50,3 +50,5 @@ Projectiles: {
 	knockedArrow.DisplayName: knocked Arrow
 	KnockedArrow.DisplayName: Knocked Arrow
 }
+
+Keybinds.OpenSkillTree.DisplayName: Open Skill Tree
