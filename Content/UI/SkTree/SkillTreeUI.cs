@@ -24,7 +24,7 @@ namespace EthoriaMod.Content.UI.SkTree
         {
             Closed,
             Open,
-            enumSize
+            EnumSize
         }
 
         private static RenderTarget2D cutoutSurface;

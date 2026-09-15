@@ -62,18 +62,20 @@ namespace EthoriaMod.Content.UI.SkTree
             Up,
             Right,
             Down,
-            enumSize
+            EnumSize
         }
         public List<SkillTreeNode> nodeList;
         public SkillTreeNode root;
         public int nodeDist;
         public static int defaultSize = 10;
-        public class SkillTreeNode : TagSerializable 
+        public class SkillTreeNode : TagSerializable
         {
-            
+
 
             public List<List<SkillTreeNode>> children;
             public List<SkillTreeNode> parents;
+            public List<SkillTreeNode> dependencies;
+            public List<SkillTreeNode> dependentOnMe;
             public Vector2 drawPos;
             public SkillID skillID;
             public bool unlocked;
@@ -84,13 +86,15 @@ namespace EthoriaMod.Content.UI.SkTree
 
             public SkillTreeNode(float drawX, float drawY, SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false)
             {
+                dependencies = new List<SkillTreeNode>();
+                dependentOnMe = new List<SkillTreeNode>();
                 parents = new List<SkillTreeNode>();
                 children = new List<List<SkillTreeNode>>();
-                for (int i = 0; i < (int)GrowDirection.enumSize; i++)
+                for (int i = 0; i < (int)GrowDirection.EnumSize; i++)
                 {
                     children.Add(new List<SkillTreeNode>());
                 }
-               
+
                 this.drawPos = new Vector2(drawX, drawY);
                 this.skillID = skillID;
                 this.unlocked = unlocked;
@@ -98,13 +102,16 @@ namespace EthoriaMod.Content.UI.SkTree
                 this.hidden = hidden;
                 w = defaultSize;
                 h = defaultSize;
+           
             }
 
             public SkillTreeNode(SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false)
             {
+                dependencies = new List<SkillTreeNode>();
+                dependentOnMe = new List<SkillTreeNode>();
                 parents = new List<SkillTreeNode>();
                 children = new List<List<SkillTreeNode>>();
-                for (int i = 0; i < (int) GrowDirection.enumSize; i++)
+                for (int i = 0; i < (int)GrowDirection.EnumSize; i++)
                 {
                     children.Add(new List<SkillTreeNode>());
                 }
@@ -118,20 +125,35 @@ namespace EthoriaMod.Content.UI.SkTree
                 h = defaultSize;
             }
 
+            public SkillTreeNode addDependency(SkillTreeNode them)
+            {
+                dependencies.Add(them);
+                them.dependentOnMe.Add(this);
+                return this;
+            }
+
+            public SkillTreeNode addEdge(SkillTreeNode child)
+            {
+
+                child.parents.Add(this);
+                return this;
+            }
+
             public SkillTreeNode addChild(SkillID skillID, List<SkillTreeNode> nodeList)
             {
                 return addChild(skillID, growDirection, nodeList);
             }
 
+
             public SkillTreeNode addChild(SkillID skillID, GrowDirection direction, List<SkillTreeNode> nodeList)
             {
-                
+
                 SkillTreeNode child = new SkillTreeNode(skillID, direction);
 
-                children[(int) direction].Add(child);
+                children[(int)direction].Add(child);
                 child.parents.Add(this);
 
-                nodeList[(int) child.skillID] = child;
+                nodeList[(int)child.skillID] = child;
                 return child;
             }
 
@@ -139,22 +161,82 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 if (unlocked)
                 {
-                    unlocked = false;
+                    relock();
                 } else
                 {
                     unlock();
                 }
             }
+
+            public void relockNoParent()
+            {
+                if (unlocked == false)
+                {
+                    return;
+                }
+                bool hasParentUnlocked = false;
+                for (int i = 0; i < parents.Count; i++) { 
+                    if (parents[i].unlocked)
+                    {
+                        hasParentUnlocked = true;
+                        break;
+                    }
+                }
+
+                unlocked = hasParentUnlocked;
+            }
+            public void relock() {
+                unlocked = false;
+                for (int i = 0; i < dependentOnMe.Count; i++)
+                {
+                    dependentOnMe[i].relock();
+                }
+
+                for (int i = 0; i < (int) GrowDirection.EnumSize; i++)
+                {
+                    List<SkillTreeNode> directionalChildren = children[i];
+                    foreach (SkillTreeNode child in directionalChildren)
+                    {
+                        child.relock();
+                    }
+                }
+                
+            }
+
             public void unlock()
             {
                 unlocked = true;
-                for (int i = 0; i < (int) GrowDirection.enumSize; i++)
+                for (int i = 0; i < (int) GrowDirection.EnumSize; i++)
                 {
                     foreach (SkillTreeNode child in children[i])
                     {
                         child.hidden = false;
                     }
                 }
+            }
+
+            public bool unlockable()
+            {
+                bool oneParentUnlocked = false;
+                for (int i = 0; i < parents.Count; i++)
+                {
+                    if (parents[i].unlocked)
+                    {
+                        oneParentUnlocked = true;
+                    }
+                }
+                if (parents.Count > 0 && !oneParentUnlocked)
+                {
+                    return false;
+                }
+                for (int i = 0; i < dependencies.Count; i++)
+                {
+                    if (!dependencies[i].unlocked)
+                    {
+                        return false;
+                    }
+                }
+                return true;
             }
             public void unlock(bool state)
             {
@@ -246,16 +328,18 @@ namespace EthoriaMod.Content.UI.SkTree
             SkillTreeNode ranger = root.addChild(SkillID.Ranger, GrowDirection.Right, nodeList);
             SkillTreeNode quickDraw = ranger.addChild(SkillID.Quickdraw, nodeList);
             ranger.addChild(SkillID.Precision, nodeList);
-            
+
+            ranger.addDependency(root);
+
             quickDraw.addChild(SkillID.LoadedShot, GrowDirection.Up, nodeList);
 
             SkillTreeNode dmgBoost1 = quickDraw.addChild(SkillID.DmgBoost1, nodeList); 
 
             SkillTreeNode doubleShot = dmgBoost1.addChild(SkillID.DoubleShot, nodeList);
             SkillTreeNode velocity = dmgBoost1.addChild(SkillID.Velocity, nodeList);
-           
+            
 
-            doubleShot.addChild(SkillID.TripleShot, nodeList);
+            //doubleShot.addEdge(velocity);
 
 
 
@@ -290,7 +374,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
                 Rectangle nodeRect = new Rectangle(drawXScreen + windowDx - defaultSize / 2, drawYScreen + windowDy - defaultSize / 2, defaultSize, defaultSize);
                 Color color = Color.Black;
-                if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)) && nodeRect.Contains(new Point(Main.mouseX , Main.mouseY)))
+                if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)) && nodeRect.Contains(new Point(Main.mouseX , Main.mouseY)) && curr.unlockable())
                 {
                     //MouseStrUI.mouseStr = curr.getDescription();
 
@@ -309,7 +393,7 @@ namespace EthoriaMod.Content.UI.SkTree
                 }
 
               
-                for (int i = 0; i < (int) GrowDirection.enumSize; i++) { 
+                for (int i = 0; i < (int) GrowDirection.EnumSize; i++) { 
                     List<SkillTreeNode> children = curr.children[i];
 
 
@@ -342,7 +426,7 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 SkillTreeNode curr = queue.Dequeue();
                 
-                for (int i = 0; i < (int)GrowDirection.enumSize; i++)
+                for (int i = 0; i < (int)GrowDirection.EnumSize; i++)
                 {
                     float floatDist = (float) nodeDist;
                     List<SkillTreeNode> directionalChildren = curr.children[i];
