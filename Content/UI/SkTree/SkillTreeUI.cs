@@ -134,13 +134,16 @@ namespace EthoriaMod.Content.UI.SkTree
                         sourceRect,
                         Color.White
                     );
-                    MouseState ms = Mouse.GetState();
+
                     if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)))
                     {
                         MouseState mouseState = Mouse.GetState();
                         int mouseScroll = mouseState.ScrollWheelValue;
 
                         Main.LocalPlayer.mouseInterface = true;
+
+                        PlayerInput.LockVanillaMouseScroll("SkillTreeUI");
+
                         if (Main.mouseLeft && Main.mouseLeftRelease)
                         {
                             dragging = true;
@@ -148,8 +151,7 @@ namespace EthoriaMod.Content.UI.SkTree
                         int dScroll = mouseScroll - oldMouseScroll;
                        
                         oldMouseScroll = mouseScroll;
-
-                        skillTreeZoom += int.Sign(dScroll) * 0.1f;
+                        skillTreeZoom -= int.Sign(dScroll) * 0.1f;
                         skillTreeZoom = float.Clamp(skillTreeZoom, 0.25f, 2);
                     }
                     if (!Main.mouseLeft)

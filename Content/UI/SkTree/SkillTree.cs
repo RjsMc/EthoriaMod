@@ -70,7 +70,7 @@ namespace EthoriaMod.Content.UI.SkTree
         public int nodeDist;
         public static int defaultSize = 10;
         public Texture2D skillTreePlate;
-        public Texture2D BowIcon;
+        public Texture2D bowIcon;
         public class SkillTreeNode : TagSerializable
         {
 
@@ -324,8 +324,8 @@ namespace EthoriaMod.Content.UI.SkTree
 
         public SkillTree(int nodeDist = 250)
         {
-            skillTreePlate = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/SkillTreePlateBorder").Value;
-            BowIcon = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/BowPlateIcon").Value;
+            skillTreePlate = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/SkillTreePlateBorder").Value;
+            bowIcon = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/PlaceholderBow").Value;
 
             this.nodeDist = nodeDist;
             root = new SkillTreeNode(0.5f, 0.5f, SkillID.Start, GrowDirection.None);
@@ -436,8 +436,13 @@ namespace EthoriaMod.Content.UI.SkTree
                     }
                 }
 
-
-                spriteBatch.Draw(BowIcon, rect, color);
+                if (curr.myIcon != null)
+                {
+                    spriteBatch.Draw(curr.myIcon, rect, color);
+                } else
+                {
+                    spriteBatch.Draw(bowIcon, rect, color);
+                }
                 spriteBatch.Draw(skillTreePlate, rect, color);
                
                 
