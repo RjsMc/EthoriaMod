@@ -394,8 +394,11 @@ namespace EthoriaMod.Content.UI.SkTree
                 int nodeRectY = (int) ((float) (drawYScreen - Main.screenHeight / 2) * zoom);
                 nodeRectY += Main.screenHeight / 2 + windowDy - (nodeRectH / 2);
                 Rectangle nodeRect = new Rectangle(nodeRectX, nodeRectY, nodeRectW, nodeRectH);
-                Color color = Color.White;
 
+
+
+
+                Color color = Color.White;
                 if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)) && nodeRect.Contains(new Point(Main.mouseX , Main.mouseY)) && curr.unlockable())
                 {
                     //MouseStrUI.mouseStr = curr.getDescription();

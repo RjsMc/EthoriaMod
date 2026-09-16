@@ -161,11 +161,11 @@ namespace EthoriaMod.Content.UI.SkTree
                     {
                         if (oldMouseX != -1)
                         {
-                            displacement.X += ((float)(Main.mouseX - oldMouseX)) / Main.screenWidth;
+                            displacement.X += (((float)(Main.mouseX - oldMouseX)) / Main.screenWidth) * skillTreeZoom;
                         }
                         if (oldMouseY != -1)
                         {
-                            displacement.Y += ((float)(Main.mouseY - oldMouseY)) / Main.screenHeight;
+                            displacement.Y += (((float)(Main.mouseY - oldMouseY)) / Main.screenHeight) * skillTreeZoom;
                         }
                         oldMouseX = Main.mouseX;
                         oldMouseY = Main.mouseY;
