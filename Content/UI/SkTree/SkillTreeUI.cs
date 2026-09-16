@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -38,6 +39,9 @@ namespace EthoriaMod.Content.UI.SkTree
         public static int oldMouseX = -1;
         public static int oldMouseY = -1;
 
+        public static int oldMouseScroll = 0;
+
+        public static float skillTreeZoom = 1;
 
         public static SkillTreeState state = SkillTreeState.Closed;
         
@@ -55,7 +59,6 @@ namespace EthoriaMod.Content.UI.SkTree
             switch (state)
             {
                 case SkillTreeState.Closed:
-
                     if (EthoriaKeybinds.skillTreeHotKey.JustPressed)
                     {
                         state = SkillTreeState.Open;
@@ -76,9 +79,11 @@ namespace EthoriaMod.Content.UI.SkTree
                     int skillTreeWindowScreenW = (int)(skillTreeWindowW * ((float)Main.screenWidth));
                     int skillTreeWindowScreenH = (int)(skillTreeWindowH * ((float)Main.screenHeight));
 
+                    int cutoutWindowW = (int) (((float) skillTreeWindowScreenW) * skillTreeZoom);
+                    int cutoutWindowH = (int) (((float) skillTreeWindowScreenH) * skillTreeZoom);
+                 
 
-
-                    Rectangle sourceRect = new Rectangle(midX - skillTreeWindowScreenW / 2, midY - skillTreeWindowScreenH / 2, skillTreeWindowScreenW, skillTreeWindowScreenH);
+                    Rectangle sourceRect = new Rectangle(midX - cutoutWindowW / 2, midY - cutoutWindowH / 2, cutoutWindowW, cutoutWindowH);
 
                     Rectangle backgroundRect = new Rectangle(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2, skillTreeWindowScreenW, skillTreeWindowScreenH);
 
@@ -125,19 +130,27 @@ namespace EthoriaMod.Content.UI.SkTree
 
                     spriteBatch.Draw(
                         cutoutSurface,
-                        new Vector2(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2),
+                        backgroundRect,
                         sourceRect,
                         Color.White
                     );
                     MouseState ms = Mouse.GetState();
                     if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)))
                     {
+                        MouseState mouseState = Mouse.GetState();
+                        int mouseScroll = mouseState.ScrollWheelValue;
 
                         Main.LocalPlayer.mouseInterface = true;
                         if (Main.mouseLeft && Main.mouseLeftRelease)
                         {
                             dragging = true;
                         }
+                        int dScroll = mouseScroll - oldMouseScroll;
+                       
+                        oldMouseScroll = mouseScroll;
+
+                        skillTreeZoom += int.Sign(dScroll) * 0.1f;
+                        skillTreeZoom = float.Clamp(skillTreeZoom, 0.25f, 2);
                     }
                     if (!Main.mouseLeft)
                     {

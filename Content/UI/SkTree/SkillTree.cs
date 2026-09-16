@@ -64,10 +64,13 @@ namespace EthoriaMod.Content.UI.SkTree
             Down,
             EnumSize
         }
+
         public List<SkillTreeNode> nodeList;
         public SkillTreeNode root;
         public int nodeDist;
         public static int defaultSize = 10;
+        public Texture2D skillTreePlate;
+        public Texture2D BowIcon;
         public class SkillTreeNode : TagSerializable
         {
 
@@ -84,6 +87,8 @@ namespace EthoriaMod.Content.UI.SkTree
             public int h;
             public bool hidden;
 
+            public Texture2D myPlate;
+            public Texture2D myIcon;
             public SkillTreeNode(float drawX, float drawY, SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false)
             {
                 dependencies = new List<SkillTreeNode>();
@@ -317,8 +322,11 @@ namespace EthoriaMod.Content.UI.SkTree
             public static Func<TagCompound, SkillTreeNode> DESERIALIZER = Load;
         }
 
-        public SkillTree(int nodeDist = 100)
+        public SkillTree(int nodeDist = 250)
         {
+            skillTreePlate = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/SkillTreePlateBorder").Value;
+            BowIcon = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/BowPlateIcon").Value;
+
             this.nodeDist = nodeDist;
             root = new SkillTreeNode(0.5f, 0.5f, SkillID.Start, GrowDirection.None);
             nodeList = Enumerable.Repeat((SkillTreeNode)null, (int) SkillID.EnumSize).ToList();
@@ -358,6 +366,8 @@ namespace EthoriaMod.Content.UI.SkTree
             SkillTreeNode root = this.root;
             Queue<SkillTreeNode> queue = new Queue<SkillTreeNode>();
 
+            float zoom = 1f / SkillTreeUI.skillTreeZoom;
+
             queue.Enqueue(root);
 
             while (queue.Count > 0) 
@@ -366,14 +376,26 @@ namespace EthoriaMod.Content.UI.SkTree
                 SkillTreeNode curr = queue.Dequeue();
                 int drawXScreen = (int)(Main.screenWidth * (curr.drawPos.X + displacement.X));
                 int drawYScreen = (int)(Main.screenHeight * (curr.drawPos.Y + displacement.Y));
-                Rectangle rect = new Rectangle(drawXScreen - defaultSize / 2, drawYScreen - defaultSize / 2, defaultSize, defaultSize);
+
+                int plateW = skillTreePlate.Width;
+                int plateH = skillTreePlate.Height;
+
+                Rectangle rect = new Rectangle(drawXScreen - plateW / 2, drawYScreen - plateH / 2, plateW, plateH);
 
                 int windowDx = (int) (windowPosition.X - cutoutPosition.X);
                 int windowDy = (int) (windowPosition.Y - cutoutPosition.Y);
 
 
-                Rectangle nodeRect = new Rectangle(drawXScreen + windowDx - defaultSize / 2, drawYScreen + windowDy - defaultSize / 2, defaultSize, defaultSize);
-                Color color = Color.Black;
+                int nodeRectW = (int) ((float) plateW * zoom);
+                int nodeRectX = (int) ((float) (drawXScreen - Main.screenWidth / 2) * zoom);
+                nodeRectX += Main.screenWidth / 2 + windowDx - (nodeRectW / 2);
+
+                int nodeRectH = (int) ((float) plateH * zoom);
+                int nodeRectY = (int) ((float) (drawYScreen - Main.screenHeight / 2) * zoom);
+                nodeRectY += Main.screenHeight / 2 + windowDy - (nodeRectH / 2);
+                Rectangle nodeRect = new Rectangle(nodeRectX, nodeRectY, nodeRectW, nodeRectH);
+                Color color = Color.White;
+
                 if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)) && nodeRect.Contains(new Point(Main.mouseX , Main.mouseY)) && curr.unlockable())
                 {
                     //MouseStrUI.mouseStr = curr.getDescription();
@@ -412,7 +434,8 @@ namespace EthoriaMod.Content.UI.SkTree
                 }
 
 
-                spriteBatch.Draw(TextureAssets.MagicPixel.Value, rect, color);
+                spriteBatch.Draw(BowIcon, rect, color);
+                spriteBatch.Draw(skillTreePlate, rect, color);
                
                 
             }

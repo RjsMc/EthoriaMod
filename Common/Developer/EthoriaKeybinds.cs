@@ -14,11 +14,12 @@ namespace EthoriaMod.Common.Developer
     public class EthoriaKeybinds : ModSystem
     {
         public static ModKeybind skillTreeHotKey { get; private set; }
-
+  
         public override void Load()
         {
            
             skillTreeHotKey = KeybindLoader.RegisterKeybind(Mod, "OpenSkillTree", "J");
+      
         }
 
         public override void Unload()
