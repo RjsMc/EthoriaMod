@@ -104,7 +104,7 @@ namespace EthoriaMod.Content.Items.Weapons.Ranged
                 theArrow.actualType = type;
                 theArrow.minChargingFrames = int.Min((int) (item.useAnimation * (1.0f / player.GetAttackSpeed(DamageClass.Ranged))), 10);
                 theArrow.numArrows = ethPlayer.numArrows;
-                theArrow.hiddenFrames = 0;
+                theArrow.hiddenFrames = 10;
                 return false;
             }
 

@@ -69,8 +69,12 @@ namespace EthoriaMod.Content.UI.SkTree
         public SkillTreeNode root;
         public int nodeDist;
         public static int defaultSize = 10;
+
+        public Texture2D skillTreeBackground;
         public Texture2D skillTreePlate;
         public Texture2D bowIcon;
+        public Texture2D doubleBowIcon;
+
         public class SkillTreeNode : TagSerializable
         {
 
@@ -89,7 +93,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
             public Texture2D myPlate;
             public Texture2D myIcon;
-            public SkillTreeNode(float drawX, float drawY, SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false)
+            public SkillTreeNode(float drawX, float drawY, SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false, Texture2D myIcon = null, Texture2D myPlate = null)
             {
                 dependencies = new List<SkillTreeNode>();
                 dependentOnMe = new List<SkillTreeNode>();
@@ -107,10 +111,12 @@ namespace EthoriaMod.Content.UI.SkTree
                 this.hidden = hidden;
                 w = defaultSize;
                 h = defaultSize;
-           
+
+                this.myIcon = myIcon;
+                this.myPlate = myPlate;
             }
 
-            public SkillTreeNode(SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false)
+            public SkillTreeNode(SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false, Texture2D myIcon = null, Texture2D myPlate = null)
             {
                 dependencies = new List<SkillTreeNode>();
                 dependentOnMe = new List<SkillTreeNode>();
@@ -128,6 +134,9 @@ namespace EthoriaMod.Content.UI.SkTree
                 this.hidden = hidden;
                 w = defaultSize;
                 h = defaultSize;
+
+                this.myIcon = myIcon;
+                this.myPlate = myPlate;
             }
 
             public SkillTreeNode addDependency(SkillTreeNode them)
@@ -144,16 +153,16 @@ namespace EthoriaMod.Content.UI.SkTree
                 return this;
             }
 
-            public SkillTreeNode addChild(SkillID skillID, List<SkillTreeNode> nodeList)
+            public SkillTreeNode addChild(SkillID skillID, List<SkillTreeNode> nodeList, Texture2D myIcon = null, Texture2D myPlate = null)
             {
-                return addChild(skillID, growDirection, nodeList);
+                return addChild(skillID, growDirection, nodeList, myIcon, myPlate);
             }
 
 
-            public SkillTreeNode addChild(SkillID skillID, GrowDirection direction, List<SkillTreeNode> nodeList)
+            public SkillTreeNode addChild(SkillID skillID, GrowDirection direction, List<SkillTreeNode> nodeList, Texture2D myIcon = null, Texture2D myPlate = null)
             {
 
-                SkillTreeNode child = new SkillTreeNode(skillID, direction);
+                SkillTreeNode child = new SkillTreeNode(skillID, direction, true, false, myIcon, myPlate);
 
                 children[(int)direction].Add(child);
                 child.parents.Add(this);
@@ -324,8 +333,10 @@ namespace EthoriaMod.Content.UI.SkTree
 
         public SkillTree(int nodeDist = 250)
         {
+            skillTreeBackground = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/SkillTreeBackground").Value;
             skillTreePlate = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/SkillTreePlateBorder").Value;
             bowIcon = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/PlaceholderBow").Value;
+            doubleBowIcon = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/PlaceholderBow2").Value;
 
             this.nodeDist = nodeDist;
             root = new SkillTreeNode(0.5f, 0.5f, SkillID.Start, GrowDirection.None);
@@ -343,7 +354,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
             SkillTreeNode dmgBoost1 = quickDraw.addChild(SkillID.DmgBoost1, nodeList); 
 
-            SkillTreeNode doubleShot = dmgBoost1.addChild(SkillID.DoubleShot, nodeList);
+            SkillTreeNode doubleShot = dmgBoost1.addChild(SkillID.DoubleShot, nodeList, doubleBowIcon);
             SkillTreeNode velocity = dmgBoost1.addChild(SkillID.Velocity, nodeList);
             
 
@@ -430,12 +441,13 @@ namespace EthoriaMod.Content.UI.SkTree
                         }
                         int childDrawXScreen = (int)(Main.screenWidth * (child.drawPos.X + displacement.X));
                         int childDrawYScreen = (int)(Main.screenHeight * (child.drawPos.Y + displacement.Y));
-                        HelperFunctions.drawLine(spriteBatch, new Vector2(drawXScreen, drawYScreen), new Vector2(childDrawXScreen, childDrawYScreen), Color.Black);
+                        HelperFunctions.drawLine(spriteBatch, new Vector2(drawXScreen, drawYScreen), new Vector2(childDrawXScreen, childDrawYScreen), Color.Black, 2);
 
                         queue.Enqueue(child);
                     }
                 }
 
+                spriteBatch.Draw(skillTreeBackground, rect, color);
                 if (curr.myIcon != null)
                 {
                     spriteBatch.Draw(curr.myIcon, rect, color);
