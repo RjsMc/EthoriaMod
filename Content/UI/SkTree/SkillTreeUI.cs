@@ -33,7 +33,7 @@ namespace EthoriaMod.Content.UI.SkTree
         public static float skillTreeDrawX = 0.5f;
         public static float skillTreeDrawY = 0.2f;
         public static float skillTreeWindowW = 0.5f;
-        public static float skillTreeWindowH = 0.3f;
+        public static float skillTreeWindowH = 0.5f;
 
         public static bool dragging = false;
         public static int oldMouseX = -1;
