@@ -31,7 +31,7 @@ namespace EthoriaMod.Content.UI.SkTree
         private static RenderTarget2D cutoutSurface;
         public static Vector2 displacement = new Vector2(0, 0);
         public static float skillTreeDrawX = 0.5f;
-        public static float skillTreeDrawY = 0.2f;
+        public static float skillTreeDrawY = 0.5f;
         public static float skillTreeWindowW = 0.5f;
         public static float skillTreeWindowH = 0.5f;
 
@@ -92,7 +92,7 @@ namespace EthoriaMod.Content.UI.SkTree
                     if (cutoutSurface == null || cutoutSurface.Width != Main.screenWidth || cutoutSurface.Height != Main.screenHeight)
                     {
                         cutoutSurface = new RenderTarget2D(graphicsDevice, Main.screenWidth, Main.screenHeight);
-                        skillTree.updateChildrenPositions();
+                        skillTree.updatePositions();
                     }
                     spriteBatch.End();
 
@@ -111,7 +111,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
                     Vector2 cutoutPos = new Vector2(midX - skillTreeWindowScreenW / 2, midY - skillTreeWindowScreenH / 2);
                     Vector2 windowPosition = new Vector2(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2);
-                    skillTree.drawSkillTree(spriteBatch, displacement, cutoutPos, windowPosition, backgroundRect);
+                    skillTree.DrawSkillTree(spriteBatch, displacement, cutoutPos, windowPosition, backgroundRect);
 
                     spriteBatch.End();
 

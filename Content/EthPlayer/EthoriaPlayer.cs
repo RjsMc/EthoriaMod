@@ -63,7 +63,7 @@ namespace EthoriaMod.Content.EthPlayer
         }
         public override void PostUpdateEquips()
         {
-            skillTree.updateSkillEffects();
+            skillTree.UpdateSkillEffects();
         }
         public override void PreUpdate()
         {

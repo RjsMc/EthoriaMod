@@ -55,15 +55,7 @@ namespace EthoriaMod.Content.UI.SkTree
             EnumSize
 
         }
-        public enum GrowDirection
-        {
-            None,
-            Left,
-            Up,
-            Right,
-            Down,
-            EnumSize
-        }
+     
 
         public List<SkillTreeNode> nodeList;
         public SkillTreeNode root;
@@ -75,114 +67,90 @@ namespace EthoriaMod.Content.UI.SkTree
         public Texture2D bowIcon;
         public Texture2D doubleBowIcon;
 
+        public int squareSize;
+
         public class SkillTreeNode : TagSerializable
         {
 
 
-            public List<List<SkillTreeNode>> children;
+            public List<SkillTreeNode> children;
             public List<SkillTreeNode> parents;
             public List<SkillTreeNode> dependencies;
             public List<SkillTreeNode> dependentOnMe;
             public Vector2 drawPos;
+            public Point gridIdx;
+
             public SkillID skillID;
             public bool unlocked;
-            public GrowDirection growDirection;
-            public int w;
-            public int h;
             public bool hidden;
 
             public Texture2D myPlate;
             public Texture2D myIcon;
-            public SkillTreeNode(float drawX, float drawY, SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false, Texture2D myIcon = null, Texture2D myPlate = null)
-            {
-                dependencies = new List<SkillTreeNode>();
-                dependentOnMe = new List<SkillTreeNode>();
-                parents = new List<SkillTreeNode>();
-                children = new List<List<SkillTreeNode>>();
-                for (int i = 0; i < (int)GrowDirection.EnumSize; i++)
-                {
-                    children.Add(new List<SkillTreeNode>());
-                }
 
-                this.drawPos = new Vector2(drawX, drawY);
+            public SkillTreeNode(Point gridIdx, SkillID skillID, bool hidden = true, bool unlocked = false, Texture2D myIcon = null, Texture2D myPlate = null)
+            {
+                this.gridIdx = gridIdx;
                 this.skillID = skillID;
                 this.unlocked = unlocked;
-                this.growDirection = growDirection;
                 this.hidden = hidden;
-                w = defaultSize;
-                h = defaultSize;
 
                 this.myIcon = myIcon;
                 this.myPlate = myPlate;
-            }
 
-            public SkillTreeNode(SkillID skillID, GrowDirection growDirection = GrowDirection.None, bool hidden = true, bool unlocked = false, Texture2D myIcon = null, Texture2D myPlate = null)
-            {
+                children = new List<SkillTreeNode>();
+                parents = new List<SkillTreeNode>();
                 dependencies = new List<SkillTreeNode>();
                 dependentOnMe = new List<SkillTreeNode>();
-                parents = new List<SkillTreeNode>();
-                children = new List<List<SkillTreeNode>>();
-                for (int i = 0; i < (int)GrowDirection.EnumSize; i++)
-                {
-                    children.Add(new List<SkillTreeNode>());
-                }
 
-                this.drawPos = new Vector2(0, 0);
-                this.skillID = skillID;
-                this.unlocked = unlocked;
-                this.growDirection = growDirection;
-                this.hidden = hidden;
-                w = defaultSize;
-                h = defaultSize;
 
-                this.myIcon = myIcon;
-                this.myPlate = myPlate;
             }
 
-            public SkillTreeNode addDependency(SkillTreeNode them)
+            public SkillTreeNode AddDependency(SkillTreeNode them)
             {
                 dependencies.Add(them);
                 them.dependentOnMe.Add(this);
                 return this;
             }
 
-            public SkillTreeNode addEdge(SkillTreeNode child)
+            public SkillTreeNode AddEdge(SkillTreeNode child)
             {
 
                 child.parents.Add(this);
                 return this;
             }
 
-            public SkillTreeNode addChild(SkillID skillID, List<SkillTreeNode> nodeList, Texture2D myIcon = null, Texture2D myPlate = null)
+            public SkillTreeNode AddChild(Point gridIdx, SkillID skillID, List<SkillTreeNode> nodeList, Texture2D myIcon = null, Texture2D myPlate = null)
             {
-                return addChild(skillID, growDirection, nodeList, myIcon, myPlate);
-            }
+                SkillTreeNode child = new SkillTreeNode(gridIdx, skillID, true, false, myIcon, myPlate);
 
-
-            public SkillTreeNode addChild(SkillID skillID, GrowDirection direction, List<SkillTreeNode> nodeList, Texture2D myIcon = null, Texture2D myPlate = null)
-            {
-
-                SkillTreeNode child = new SkillTreeNode(skillID, direction, true, false, myIcon, myPlate);
-
-                children[(int)direction].Add(child);
                 child.parents.Add(this);
+                children.Add(child);
 
                 nodeList[(int)child.skillID] = child;
                 return child;
             }
+            public SkillTreeNode AddChildDirection(Point direction, SkillID skillID, List<SkillTreeNode> nodeList, Texture2D myIcon = null, Texture2D myPlate = null)
+            {
+                SkillTreeNode child = new SkillTreeNode(gridIdx + direction, skillID, true, false, myIcon, myPlate);
+                child.parents.Add(this);
 
-            public void changeLockState()
+                children.Add(child);
+                nodeList[(int)child.skillID] = child;
+                return child;
+            }
+
+            public void ChangeLockState()
             {
                 if (unlocked)
                 {
-                    relock();
+                    Relock();
                 } else
                 {
-                    unlock();
+                    Unlock();
                 }
             }
 
-            public void relockNoParent()
+            public void RelockNoParent()
             {
                 if (unlocked == false)
                 {
@@ -199,37 +167,33 @@ namespace EthoriaMod.Content.UI.SkTree
 
                 unlocked = hasParentUnlocked;
             }
-            public void relock() {
+            public void Relock() {
                 unlocked = false;
                 for (int i = 0; i < dependentOnMe.Count; i++)
                 {
-                    dependentOnMe[i].relock();
+                    dependentOnMe[i].Relock();
                 }
 
-                for (int i = 0; i < (int) GrowDirection.EnumSize; i++)
+               
+                foreach (SkillTreeNode child in children)
                 {
-                    List<SkillTreeNode> directionalChildren = children[i];
-                    foreach (SkillTreeNode child in directionalChildren)
-                    {
-                        child.relock();
-                    }
+                    child.Relock();
+                }
+                
+                
+            }
+
+            public void Unlock()
+            {
+                unlocked = true;
+                foreach (SkillTreeNode child in children)
+                {
+                    child.hidden = false;
                 }
                 
             }
 
-            public void unlock()
-            {
-                unlocked = true;
-                for (int i = 0; i < (int) GrowDirection.EnumSize; i++)
-                {
-                    foreach (SkillTreeNode child in children[i])
-                    {
-                        child.hidden = false;
-                    }
-                }
-            }
-
-            public bool unlockable()
+            public bool Unlockable()
             {
                 bool oneParentUnlocked = false;
                 for (int i = 0; i < parents.Count; i++)
@@ -252,11 +216,11 @@ namespace EthoriaMod.Content.UI.SkTree
                 }
                 return true;
             }
-            public void unlock(bool state)
+            public void Unlock(bool state)
             {
                 if (!unlocked && state)
                 {
-                    unlock();
+                    Unlock();
                 }
             }
 
@@ -271,13 +235,13 @@ namespace EthoriaMod.Content.UI.SkTree
 
             public static SkillTreeNode Load(TagCompound tag)
             {
-                SkillTreeNode ret = new SkillTreeNode(SkillID.None);
+                SkillTreeNode ret = new SkillTreeNode(new Point(0, 0), SkillID.None);
                 ret.unlocked = tag.GetBool("unlocked");
                 ret.hidden = tag.GetBool("hidden");
                 return ret;
             }
 
-            public string getDescription()
+            public string GetDescription()
             {
                 switch (skillID)
                 {
@@ -338,24 +302,47 @@ namespace EthoriaMod.Content.UI.SkTree
             bowIcon = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/PlaceholderBow").Value;
             doubleBowIcon = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/PlaceholderBow2").Value;
 
+            Point left = new Point(-1, 0);
+            Point right = new Point(1, 0);
+            Point up = new Point(0, 1);
+            Point down = new Point(0, -1);
+
+            
+
             this.nodeDist = nodeDist;
-            root = new SkillTreeNode(0.5f, 0.5f, SkillID.Start, GrowDirection.None);
+            this.squareSize = nodeDist;
+
+
+            root = new SkillTreeNode(new Point(0, 0), SkillID.Start, false);
             nodeList = Enumerable.Repeat((SkillTreeNode)null, (int) SkillID.EnumSize).ToList();
             nodeList[(int) root.skillID] = root;
 
-            root.addChild(SkillID.Warrior, GrowDirection.Left, nodeList);
-            SkillTreeNode ranger = root.addChild(SkillID.Ranger, GrowDirection.Right, nodeList);
-            SkillTreeNode quickDraw = ranger.addChild(SkillID.Quickdraw, nodeList);
-            ranger.addChild(SkillID.Precision, nodeList);
 
-            ranger.addDependency(root);
 
-            quickDraw.addChild(SkillID.LoadedShot, GrowDirection.Up, nodeList);
 
-            SkillTreeNode dmgBoost1 = quickDraw.addChild(SkillID.DmgBoost1, nodeList); 
 
-            SkillTreeNode doubleShot = dmgBoost1.addChild(SkillID.DoubleShot, nodeList, doubleBowIcon);
-            SkillTreeNode velocity = dmgBoost1.addChild(SkillID.Velocity, nodeList);
+
+            // Do Not Edit Above This Line!
+            // Step1 Name a node Ex: SkillTreeNode root = new SkillTreeNode(new Point(0, 0), SkillID.Start, false);
+            // Step2 Add children to the node there are two ways to do this
+            // 1 - AddChildDirection(direction, SkillID, nodeList, textureIcon, plateIcon); Adds child at the position parent.gridIdx + direction 
+         
+            // 2 - AddChild(gridIdx, SkillId, nodeList, textureIcon, plateIcon); Adds child at raw position gridIdx
+
+            // See code after this for examples
+
+
+            root.AddChildDirection(left, SkillID.Warrior, nodeList);
+            SkillTreeNode ranger = root.AddChildDirection(right, SkillID.Ranger, nodeList);
+            SkillTreeNode quickDraw = ranger.AddChildDirection(right, SkillID.Quickdraw, nodeList);
+            ranger.AddChildDirection(right,SkillID.Precision, nodeList);
+
+            quickDraw.AddChildDirection(up, SkillID.LoadedShot, nodeList);
+
+            SkillTreeNode dmgBoost1 = quickDraw.AddChildDirection(right, SkillID.DmgBoost1, nodeList); 
+
+            SkillTreeNode doubleShot = dmgBoost1.AddChildDirection(right, SkillID.DoubleShot, nodeList, doubleBowIcon);
+            SkillTreeNode velocity = dmgBoost1.AddChildDirection(right, SkillID.Velocity, nodeList);
             
 
             //doubleShot.addEdge(velocity);
@@ -365,14 +352,14 @@ namespace EthoriaMod.Content.UI.SkTree
 
 
 
-            root.addChild(SkillID.Mage, GrowDirection.Up, nodeList);
-            SkillTreeNode summoner = root.addChild(SkillID.Summoner, GrowDirection.Down, nodeList);
+            root.AddChildDirection(up, SkillID.Mage, nodeList);
+            SkillTreeNode summoner = root.AddChildDirection(down, SkillID.Summoner, nodeList);
 
 
 
-            updateChildrenPositions();
+            updatePositions();
         }
-        public void drawSkillTree(SpriteBatch spriteBatch, Vector2 displacement, Vector2 cutoutPosition, Vector2 windowPosition, Rectangle backgroundRect)
+        public void DrawSkillTree(SpriteBatch spriteBatch, Vector2 displacement, Vector2 cutoutPosition, Vector2 windowPosition, Rectangle backgroundRect)
         {
             SkillTreeNode root = this.root;
             Queue<SkillTreeNode> queue = new Queue<SkillTreeNode>();
@@ -383,7 +370,6 @@ namespace EthoriaMod.Content.UI.SkTree
 
             while (queue.Count > 0) 
             {
-
                 SkillTreeNode curr = queue.Dequeue();
                 int drawXScreen = (int)(Main.screenWidth * (curr.drawPos.X + displacement.X));
                 int drawYScreen = (int)(Main.screenHeight * (curr.drawPos.Y + displacement.Y));
@@ -406,20 +392,17 @@ namespace EthoriaMod.Content.UI.SkTree
                 nodeRectY += Main.screenHeight / 2 + windowDy - (nodeRectH / 2);
                 Rectangle nodeRect = new Rectangle(nodeRectX, nodeRectY, nodeRectW, nodeRectH);
 
-
-
-
                 Color color = Color.White;
-                if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)) && nodeRect.Contains(new Point(Main.mouseX , Main.mouseY)) && curr.unlockable())
+                if (backgroundRect.Contains(new Point(Main.mouseX, Main.mouseY)) && nodeRect.Contains(new Point(Main.mouseX , Main.mouseY)) && curr.Unlockable())
                 {
                     //MouseStrUI.mouseStr = curr.getDescription();
 
-                    Main.instance.MouseText(curr.getDescription());
+                    Main.instance.MouseText(curr.GetDescription());
                     color = Color.Yellow;
                     if (Main.mouseLeft && Main.mouseLeftRelease)
                     {
                         
-                        curr.changeLockState();
+                        curr.ChangeLockState();
                     }
                 }
 
@@ -428,24 +411,19 @@ namespace EthoriaMod.Content.UI.SkTree
                     color = Color.Green;
                 }
 
-              
-                for (int i = 0; i < (int) GrowDirection.EnumSize; i++) { 
-                    List<SkillTreeNode> children = curr.children[i];
-
-
-                    foreach (SkillTreeNode child in children)
+                foreach (SkillTreeNode child in curr.children)
+                {
+                    if (child.hidden)
                     {
-                        if (child.hidden)
-                        {
-                            continue;
-                        }
-                        int childDrawXScreen = (int)(Main.screenWidth * (child.drawPos.X + displacement.X));
-                        int childDrawYScreen = (int)(Main.screenHeight * (child.drawPos.Y + displacement.Y));
-                        HelperFunctions.drawLine(spriteBatch, new Vector2(drawXScreen, drawYScreen), new Vector2(childDrawXScreen, childDrawYScreen), Color.Black, 2);
-
-                        queue.Enqueue(child);
+                        continue;
                     }
+                    int childDrawXScreen = (int)(Main.screenWidth * (child.drawPos.X + displacement.X));
+                    int childDrawYScreen = (int)(Main.screenHeight * (child.drawPos.Y + displacement.Y));
+                    HelperFunctions.drawLine(spriteBatch, new Vector2(drawXScreen, drawYScreen), new Vector2(childDrawXScreen, childDrawYScreen), Color.Black, 2);
+
+                    queue.Enqueue(child);
                 }
+                
 
                 spriteBatch.Draw(skillTreeBackground, rect, color);
                 if (curr.myIcon != null)
@@ -456,76 +434,26 @@ namespace EthoriaMod.Content.UI.SkTree
                     spriteBatch.Draw(bowIcon, rect, color);
                 }
                 spriteBatch.Draw(skillTreePlate, rect, color);
-               
-                
+
+
             }
         }
-        public void updateChildrenPositions()
+        public void updatePositions()
         {
-            Queue<SkillTreeNode> queue = new Queue<SkillTreeNode>();
-            queue.Enqueue(root);
-
-            while (queue.Count > 0)
+            
+            foreach (SkillTreeNode node in nodeList)
             {
-                SkillTreeNode curr = queue.Dequeue();
-                
-                for (int i = 0; i < (int)GrowDirection.EnumSize; i++)
-                {
-                    float floatDist = (float) nodeDist;
-                    List<SkillTreeNode> directionalChildren = curr.children[i];
-                    Vector2 delta = new Vector2(curr.drawPos.X, curr.drawPos.Y);
-                    Vector2 childDirection = new Vector2(0, 0);
-                    
-                    switch ((GrowDirection)i)
-                    {
-                        case GrowDirection.Left:
-                            delta.X -= floatDist / Main.screenWidth;
-                            childDirection.Y++;
-                            break;
+                if (node == null) continue;
+                // (0, 0) -> midx, midy
+                float dx = (float) (squareSize * node.gridIdx.X) / (float) Main.screenWidth;
+                float dy = (float) (squareSize * node.gridIdx.Y) / (float) Main.screenHeight;
 
-                        case GrowDirection.Right:
-                            delta.X += floatDist / Main.screenWidth;
-                            childDirection.Y++;
-                            break;
-
-                        case GrowDirection.Up:
-                            delta.Y -= floatDist / Main.screenHeight;
-                            childDirection.X++;
-                            break;
-
-
-                        case GrowDirection.Down:
-                            delta.Y += floatDist / Main.screenHeight;
-                            childDirection.X++;
-                            break;
-
-                    }
-                    int c = 0;
-                    foreach (SkillTreeNode child in directionalChildren)
-                    {
-                        Vector2 midPos = delta;
-                        Vector2 scaleRatio = new Vector2(Main.screenWidth, Main.screenHeight);
-                        int numChildren = directionalChildren.Count;
-
-                        int childrenSpan = nodeDist * (numChildren - 1) + (defaultSize * numChildren);
-
-
-                        Vector2 startPos = midPos - (childDirection * ((childrenSpan / 2) - (defaultSize / 2))) / scaleRatio;
-
-                        startPos += (childDirection * ((defaultSize * c) + (nodeDist * c))) / scaleRatio;
-
-                        child.drawPos = startPos;
-                        queue.Enqueue(child);
-
-
-                        c++;
-                    }
-                }
+                node.drawPos = new Vector2(0.5f + dx , 0.5f + dy); 
             }
         }
 
 
-        public void updateSkillEffects()
+        public void UpdateSkillEffects()
         {
             Player player = Main.LocalPlayer;
             EthoriaPlayer ethPlayer = player.GetModPlayer<EthoriaPlayer>();
@@ -582,7 +510,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
                 for (int i = 0; i < l.Count; i++)
                 {
-                    l[i].unlock(savedNodes[i].unlocked);
+                    l[i].Unlock(savedNodes[i].unlocked);
                     l[i].hidden = savedNodes[i].hidden; 
                 }
             }
