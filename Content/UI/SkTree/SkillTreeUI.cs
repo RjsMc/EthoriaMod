@@ -32,8 +32,8 @@ namespace EthoriaMod.Content.UI.SkTree
         public static Vector2 displacement = new Vector2(0, 0);
         public static float skillTreeDrawX = 0.5f;
         public static float skillTreeDrawY = 0.5f;
-        public static float skillTreeWindowW = 0.5f;
-        public static float skillTreeWindowH = 0.5f;
+        public static float skillTreeWindowW = 0.75f;
+        public static float skillTreeWindowH = 0.75f;
 
         public static bool dragging = false;
         public static int oldMouseX = -1;
@@ -42,6 +42,7 @@ namespace EthoriaMod.Content.UI.SkTree
         public static int oldMouseScroll = 0;
 
         public static float skillTreeZoom = 1;
+        
 
         public static SkillTreeState state = SkillTreeState.Closed;
         
@@ -55,6 +56,8 @@ namespace EthoriaMod.Content.UI.SkTree
             int midX = Main.screenWidth / 2;
             int midY = Main.screenHeight / 2;
 
+            int cutoutMidX = Main.screenWidth;
+            int cutoutMidY = Main.screenHeight;
 
             switch (state)
             {
@@ -83,15 +86,14 @@ namespace EthoriaMod.Content.UI.SkTree
                     int cutoutWindowH = (int) (((float) skillTreeWindowScreenH) * skillTreeZoom);
                  
 
-                    Rectangle sourceRect = new Rectangle(midX - cutoutWindowW / 2, midY - cutoutWindowH / 2, cutoutWindowW, cutoutWindowH);
 
                     Rectangle backgroundRect = new Rectangle(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2, skillTreeWindowScreenW, skillTreeWindowScreenH);
 
                     graphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 
-                    if (cutoutSurface == null || cutoutSurface.Width != Main.screenWidth || cutoutSurface.Height != Main.screenHeight)
+                    if (cutoutSurface == null || cutoutSurface.Width != Main.screenWidth * 2 || cutoutSurface.Height != Main.screenHeight * 2)
                     {
-                        cutoutSurface = new RenderTarget2D(graphicsDevice, Main.screenWidth, Main.screenHeight);
+                        cutoutSurface = new RenderTarget2D(graphicsDevice, Main.screenWidth * 2, Main.screenHeight * 2);
                         skillTree.updatePositions();
                     }
                     spriteBatch.End();
@@ -109,9 +111,9 @@ namespace EthoriaMod.Content.UI.SkTree
                         null,
                         Main.GameViewMatrix.EffectMatrix);
 
-                    Vector2 cutoutPos = new Vector2(midX - skillTreeWindowScreenW / 2, midY - skillTreeWindowScreenH / 2);
+                    Vector2 cutoutPos = new Vector2(cutoutMidX - skillTreeWindowScreenW / 2, cutoutMidY - skillTreeWindowScreenH / 2);
                     Vector2 windowPosition = new Vector2(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2);
-                    skillTree.DrawSkillTree(spriteBatch, displacement, cutoutPos, windowPosition, backgroundRect);
+                    skillTree.DrawSkillTree(spriteBatch, displacement, cutoutPos, windowPosition, backgroundRect, Main.screenWidth * 2, Main.screenHeight * 2);
 
                     spriteBatch.End();
 
@@ -128,6 +130,8 @@ namespace EthoriaMod.Content.UI.SkTree
 
                     spriteBatch.Draw(TextureAssets.MagicPixel.Value, backgroundRect, Color.White);
 
+
+                    Rectangle sourceRect = new Rectangle(cutoutMidX - cutoutWindowW / 2, cutoutMidY - cutoutWindowH / 2, cutoutWindowW, cutoutWindowH);
                     spriteBatch.Draw(
                         cutoutSurface,
                         backgroundRect,
@@ -163,11 +167,11 @@ namespace EthoriaMod.Content.UI.SkTree
                     {
                         if (oldMouseX != -1)
                         {
-                            displacement.X += (((float)(Main.mouseX - oldMouseX)) / Main.screenWidth) * skillTreeZoom;
+                            displacement.X += (((float)(Main.mouseX - oldMouseX)) / (Main.screenWidth * 2)) * skillTreeZoom;
                         }
                         if (oldMouseY != -1)
                         {
-                            displacement.Y += (((float)(Main.mouseY - oldMouseY)) / Main.screenHeight) * skillTreeZoom;
+                            displacement.Y += (((float)(Main.mouseY - oldMouseY)) / (Main.screenHeight * 2)) * skillTreeZoom;
                         }
                         oldMouseX = Main.mouseX;
                         oldMouseY = Main.mouseY;

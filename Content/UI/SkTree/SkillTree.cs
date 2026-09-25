@@ -295,17 +295,17 @@ namespace EthoriaMod.Content.UI.SkTree
             public static Func<TagCompound, SkillTreeNode> DESERIALIZER = Load;
         }
 
-        public SkillTree(int nodeDist = 250)
+        public SkillTree(int nodeDist = 100)
         {
             skillTreeBackground = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/SkillTreeBackground").Value;
             skillTreePlate = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/SkillTreePlateBorder").Value;
             bowIcon = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/PlaceholderBow").Value;
             doubleBowIcon = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/PlaceholderBow2").Value;
 
-            Point left = new Point(-1, 0);
-            Point right = new Point(1, 0);
-            Point up = new Point(0, 1);
-            Point down = new Point(0, -1);
+            Point left = new Point(-2, 0);
+            Point right = new Point(2, 0);
+            Point up = new Point(0, -2);
+            Point down = new Point(0, 2);
 
             
 
@@ -334,15 +334,15 @@ namespace EthoriaMod.Content.UI.SkTree
 
             root.AddChildDirection(left, SkillID.Warrior, nodeList);
             SkillTreeNode ranger = root.AddChildDirection(right, SkillID.Ranger, nodeList);
-            SkillTreeNode quickDraw = ranger.AddChildDirection(right, SkillID.Quickdraw, nodeList);
-            ranger.AddChildDirection(right,SkillID.Precision, nodeList);
+            SkillTreeNode quickDraw = ranger.AddChildDirection(new Point(2, -2), SkillID.Quickdraw, nodeList);
+            ranger.AddChildDirection(new Point(2, 2),SkillID.Precision, nodeList);
 
             quickDraw.AddChildDirection(up, SkillID.LoadedShot, nodeList);
 
             SkillTreeNode dmgBoost1 = quickDraw.AddChildDirection(right, SkillID.DmgBoost1, nodeList); 
 
-            SkillTreeNode doubleShot = dmgBoost1.AddChildDirection(right, SkillID.DoubleShot, nodeList, doubleBowIcon);
-            SkillTreeNode velocity = dmgBoost1.AddChildDirection(right, SkillID.Velocity, nodeList);
+            SkillTreeNode doubleShot = dmgBoost1.AddChildDirection(new Point(1, -1), SkillID.DoubleShot, nodeList, doubleBowIcon);
+            SkillTreeNode velocity = dmgBoost1.AddChildDirection(new Point(1 , 1), SkillID.Velocity, nodeList);
             
 
             //doubleShot.addEdge(velocity);
@@ -359,7 +359,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
             updatePositions();
         }
-        public void DrawSkillTree(SpriteBatch spriteBatch, Vector2 displacement, Vector2 cutoutPosition, Vector2 windowPosition, Rectangle backgroundRect)
+        public void DrawSkillTree(SpriteBatch spriteBatch, Vector2 displacement, Vector2 cutoutPosition, Vector2 windowPosition, Rectangle backgroundRect, int cutoutW, int cutoutH)
         {
             SkillTreeNode root = this.root;
             Queue<SkillTreeNode> queue = new Queue<SkillTreeNode>();
@@ -371,8 +371,8 @@ namespace EthoriaMod.Content.UI.SkTree
             while (queue.Count > 0) 
             {
                 SkillTreeNode curr = queue.Dequeue();
-                int drawXScreen = (int)(Main.screenWidth * (curr.drawPos.X + displacement.X));
-                int drawYScreen = (int)(Main.screenHeight * (curr.drawPos.Y + displacement.Y));
+                int drawXScreen = (int)(cutoutW * (curr.drawPos.X + displacement.X));
+                int drawYScreen = (int)(cutoutH * (curr.drawPos.Y + displacement.Y));
 
                 int plateW = skillTreePlate.Width;
                 int plateH = skillTreePlate.Height;
@@ -384,12 +384,12 @@ namespace EthoriaMod.Content.UI.SkTree
 
 
                 int nodeRectW = (int) ((float) plateW * zoom);
-                int nodeRectX = (int) ((float) (drawXScreen - Main.screenWidth / 2) * zoom);
-                nodeRectX += Main.screenWidth / 2 + windowDx - (nodeRectW / 2);
+                int nodeRectX = (int) ((float) (drawXScreen - cutoutW / 2) * zoom);
+                nodeRectX += cutoutW / 2 + windowDx - (nodeRectW / 2);
 
                 int nodeRectH = (int) ((float) plateH * zoom);
-                int nodeRectY = (int) ((float) (drawYScreen - Main.screenHeight / 2) * zoom);
-                nodeRectY += Main.screenHeight / 2 + windowDy - (nodeRectH / 2);
+                int nodeRectY = (int) ((float) (drawYScreen - cutoutH / 2) * zoom);
+                nodeRectY += cutoutH / 2 + windowDy - (nodeRectH / 2);
                 Rectangle nodeRect = new Rectangle(nodeRectX, nodeRectY, nodeRectW, nodeRectH);
 
                 Color color = Color.White;
@@ -417,8 +417,8 @@ namespace EthoriaMod.Content.UI.SkTree
                     {
                         continue;
                     }
-                    int childDrawXScreen = (int)(Main.screenWidth * (child.drawPos.X + displacement.X));
-                    int childDrawYScreen = (int)(Main.screenHeight * (child.drawPos.Y + displacement.Y));
+                    int childDrawXScreen = (int)(cutoutW * (child.drawPos.X + displacement.X));
+                    int childDrawYScreen = (int)(cutoutH * (child.drawPos.Y + displacement.Y));
                     HelperFunctions.drawLine(spriteBatch, new Vector2(drawXScreen, drawYScreen), new Vector2(childDrawXScreen, childDrawYScreen), Color.Black, 2);
 
                     queue.Enqueue(child);
