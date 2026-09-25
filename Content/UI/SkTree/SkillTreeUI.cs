@@ -41,7 +41,9 @@ namespace EthoriaMod.Content.UI.SkTree
 
         public static int oldMouseScroll = 0;
 
+        public static float minSkillTreeZoom = 1f / 5f;
         public static float skillTreeZoom = 1;
+        public static float maxSkillTreeZoom = 3;
         
 
         public static SkillTreeState state = SkillTreeState.Closed;
@@ -56,8 +58,10 @@ namespace EthoriaMod.Content.UI.SkTree
             int midX = Main.screenWidth / 2;
             int midY = Main.screenHeight / 2;
 
-            int cutoutMidX = Main.screenWidth;
-            int cutoutMidY = Main.screenHeight;
+            int cutoutW = (int)(Main.screenWidth * maxSkillTreeZoom);
+            int cutoutH = (int)(Main.screenHeight * maxSkillTreeZoom);
+            int cutoutMidX = cutoutW / 2;
+            int cutoutMidY = cutoutH / 2;
 
             switch (state)
             {
@@ -91,9 +95,9 @@ namespace EthoriaMod.Content.UI.SkTree
 
                     graphicsDevice.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
 
-                    if (cutoutSurface == null || cutoutSurface.Width != Main.screenWidth * 2 || cutoutSurface.Height != Main.screenHeight * 2)
+                    if (cutoutSurface == null || cutoutSurface.Width != cutoutW || cutoutSurface.Height != cutoutH)
                     {
-                        cutoutSurface = new RenderTarget2D(graphicsDevice, Main.screenWidth * 2, Main.screenHeight * 2);
+                        cutoutSurface = new RenderTarget2D(graphicsDevice, cutoutW, cutoutH);
                         skillTree.updatePositions();
                     }
                     spriteBatch.End();
@@ -113,7 +117,7 @@ namespace EthoriaMod.Content.UI.SkTree
 
                     Vector2 cutoutPos = new Vector2(cutoutMidX - skillTreeWindowScreenW / 2, cutoutMidY - skillTreeWindowScreenH / 2);
                     Vector2 windowPosition = new Vector2(drawScreenX - skillTreeWindowScreenW / 2, drawScreenY - skillTreeWindowScreenH / 2);
-                    skillTree.DrawSkillTree(spriteBatch, displacement, cutoutPos, windowPosition, backgroundRect, Main.screenWidth * 2, Main.screenHeight * 2);
+                    skillTree.DrawSkillTree(spriteBatch, displacement, cutoutPos, windowPosition, backgroundRect, cutoutW, cutoutH);
 
                     spriteBatch.End();
 
@@ -156,7 +160,7 @@ namespace EthoriaMod.Content.UI.SkTree
                        
                         oldMouseScroll = mouseScroll;
                         skillTreeZoom -= int.Sign(dScroll) * 0.1f;
-                        skillTreeZoom = float.Clamp(skillTreeZoom, 0.25f, 2);
+                        skillTreeZoom = float.Clamp(skillTreeZoom, minSkillTreeZoom, maxSkillTreeZoom);
                     }
                     if (!Main.mouseLeft)
                     {
@@ -167,11 +171,11 @@ namespace EthoriaMod.Content.UI.SkTree
                     {
                         if (oldMouseX != -1)
                         {
-                            displacement.X += (((float)(Main.mouseX - oldMouseX)) / (Main.screenWidth * 2)) * skillTreeZoom;
+                            displacement.X += (((float)(Main.mouseX - oldMouseX)) / cutoutW) * skillTreeZoom;
                         }
                         if (oldMouseY != -1)
                         {
-                            displacement.Y += (((float)(Main.mouseY - oldMouseY)) / (Main.screenHeight * 2)) * skillTreeZoom;
+                            displacement.Y += (((float)(Main.mouseY - oldMouseY)) / cutoutH) * skillTreeZoom;
                         }
                         oldMouseX = Main.mouseX;
                         oldMouseY = Main.mouseY;

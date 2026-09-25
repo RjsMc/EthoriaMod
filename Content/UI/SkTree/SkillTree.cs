@@ -295,7 +295,7 @@ namespace EthoriaMod.Content.UI.SkTree
             public static Func<TagCompound, SkillTreeNode> DESERIALIZER = Load;
         }
 
-        public SkillTree(int nodeDist = 100)
+        public SkillTree(int nodeDist = 10)
         {
             skillTreeBackground = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/SkillTreeBackground").Value;
             skillTreePlate = ModContent.Request<Texture2D>("EthoriaMod/Content/UI/SkTree/Assets/SkillTreePlateBorder").Value;
@@ -445,8 +445,8 @@ namespace EthoriaMod.Content.UI.SkTree
             {
                 if (node == null) continue;
                 // (0, 0) -> midx, midy
-                float dx = (float) (squareSize * node.gridIdx.X) / (float) Main.screenWidth;
-                float dy = (float) (squareSize * node.gridIdx.Y) / (float) Main.screenHeight;
+                float dx = (float) (squareSize * node.gridIdx.X) / (float) Main.screenWidth * SkillTreeUI.maxSkillTreeZoom;
+                float dy = (float) (squareSize * node.gridIdx.Y) / (float) Main.screenHeight * SkillTreeUI.maxSkillTreeZoom;
 
                 node.drawPos = new Vector2(0.5f + dx , 0.5f + dy); 
             }
